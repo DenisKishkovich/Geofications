@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import com.example.geofications.data.Geofication
 import com.example.geofications.MainRecyclerAdapter
 import com.example.geofications.R
@@ -19,11 +20,16 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding: FragmentMainBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
+        val binding: FragmentMainBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
 
         val application = requireNotNull(this.activity).application
 
         val dataSource = GeoficationDatabase.getInstance(application).geoficationDAO
+
+        val viewModelFactory = MainViewModelFactory(dataSource, application)
+
+        val mainViewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
 
         val a1 = Geofication(0L, "ASD", "asd")
         val a2 = Geofication(0L, "AS", "as")
