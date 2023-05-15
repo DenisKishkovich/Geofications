@@ -31,14 +31,14 @@ class MainFragment : Fragment() {
 
         val mainViewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
 
-        val a1 = Geofication(0L, "ASD", "asd")
+        /*val a1 = Geofication(0L, "ASD", "asd")
         val a2 = Geofication(0L, "AS", "as")
         val a3 = Geofication(0L, "A", "a")
         val lisst = listOf<Geofication>(a1, a2, a3)
         Log.i("LOGG", lisst[0].title)
 
         val myAdapter = MainRecyclerAdapter(lisst)
-        binding.notifList.adapter = myAdapter
+        binding.notifList.adapter = myAdapter*/
 
         return binding.root
     }

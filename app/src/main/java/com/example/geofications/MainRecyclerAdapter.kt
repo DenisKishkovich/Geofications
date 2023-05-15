@@ -7,21 +7,36 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geofications.data.Geofication
 import com.example.geofications.databinding.ListItemBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class MainRecyclerAdapter(var data: List<Geofication>):
+class MainRecyclerAdapter():
     ListAdapter<Geofication, MainRecyclerAdapter.ViewHolder>(GeoficationDiffCallback()) {
+
+    private val adapterScope = CoroutineScope(Dispatchers.Default)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = data[position]
+        val item = getItem(position)
         holder.bind(item)
     }
 
-    override fun getItemCount(): Int {
+    /*override fun getItemCount(): Int {
         return data.size
+    }*/
+
+    // Needed to refresh list
+    fun submitGeoficationList(geoficationsList: List<Geofication>?) {
+        adapterScope.launch {
+            withContext(Dispatchers.Main) {
+                submitList(geoficationsList)
+            }
+        }
     }
 
     class ViewHolder private constructor(val binding: ListItemBinding): RecyclerView.ViewHolder(binding.root) {
