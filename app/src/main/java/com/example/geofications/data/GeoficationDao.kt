@@ -1,5 +1,6 @@
 package com.example.geofications.data
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Dao
@@ -9,7 +10,7 @@ interface GeoficationDao {
      * Select all geofications from table
      */
     @Query("SELECT * FROM geofications_table")
-    suspend fun getAllGeofications(): List<Geofication>
+    fun getAllGeofications(): LiveData<List<Geofication>>
 
     /**
      * Select geofication by id
