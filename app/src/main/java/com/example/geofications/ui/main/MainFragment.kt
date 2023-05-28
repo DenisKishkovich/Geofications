@@ -44,16 +44,7 @@ class MainFragment : Fragment() {
         val myAdapter = MainRecyclerAdapter()
         binding.notifList.adapter = myAdapter
 
-        mainViewModel.geoficationList.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                myAdapter.submitGeoficationList(it)
-            }
-        })
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // Init the menu
         // The usage of an interface lets you inject your own implementation
         val menuHost: MenuHost = requireActivity()
 
@@ -80,6 +71,13 @@ class MainFragment : Fragment() {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-        super.onViewCreated(view, savedInstanceState)
+        // Refresh recycler view as database changes
+        mainViewModel.geoficationList.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                myAdapter.submitGeoficationList(it)
+            }
+        })
+
+        return binding.root
     }
 }
