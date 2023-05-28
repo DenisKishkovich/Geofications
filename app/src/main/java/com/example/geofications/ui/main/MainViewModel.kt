@@ -1,6 +1,7 @@
 package com.example.geofications.ui.main
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.geofications.data.Geofication
@@ -19,11 +20,24 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
             database.insertGeofication(geofication)
         }
     }
+
+    private suspend fun clearAll() {
+        withContext(Dispatchers.IO) {
+            database.deleteAllGeofications()
+        }
+    }
+
     fun insertTest() {
         viewModelScope.launch {
             val newGeofication = Geofication(title = "tesst", description = "testDescr")
 
             insert(newGeofication)
+        }
+    }
+
+    fun onClear() {
+        viewModelScope.launch {
+            clearAll()
         }
     }
 }

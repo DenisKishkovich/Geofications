@@ -2,11 +2,13 @@ package com.example.geofications.ui.main
 
 import android.os.Bundle
 import android.util.Log
+import android.view.*
+import android.widget.Toast
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.geofications.data.Geofication
@@ -16,6 +18,10 @@ import com.example.geofications.data.GeoficationDatabase
 import com.example.geofications.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
+
+    private lateinit var binding: FragmentMainBinding
+
+    private lateinit var mainViewModel: MainViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,12 +41,6 @@ class MainFragment : Fragment() {
         binding.mainViewModel = mainViewModel
         binding.lifecycleOwner = this
 
-        // For testing
-        /*val a1 = Geofication(0L, "ASD", "asd")
-        val a2 = Geofication(0L, "AS", "as")
-        val a3 = Geofication(0L, "A", "a")
-        val lisst = listOf<Geofication>(a1, a2, a3)*/
-//
         val myAdapter = MainRecyclerAdapter()
         binding.notifList.adapter = myAdapter
 
@@ -50,10 +50,36 @@ class MainFragment : Fragment() {
             }
         })
 
-        // For testing
-        //myAdapter.submitGeoficationList(lisst)
-
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // The usage of an interface lets you inject your own implementation
+        val menuHost: MenuHost = requireActivity()
+
+        // Add menu items without using the Fragment Menu APIs
+        // Note how we can tie the MenuProvider to the viewLifecycleOwner
+        // and an optional Lifecycle.State (here, RESUMED) to indicate when
+        // the menu should be visible
+
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.main_fragment_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.clear_all_menu_item -> {
+                        mainViewModel.onClear()
+
+                        Toast.makeText(context, "Database cleared", Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+        super.onViewCreated(view, savedInstanceState)
+    }
 }
