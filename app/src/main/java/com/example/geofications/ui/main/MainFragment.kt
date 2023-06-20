@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.geofications.GeoficationClickListener
 import com.example.geofications.data.Geofication
 import com.example.geofications.MainRecyclerAdapter
@@ -42,12 +43,9 @@ class MainFragment : Fragment() {
         binding.mainViewModel = mainViewModel
         binding.lifecycleOwner = this
 
+        // Creating an adapter with click listener. Once is clicked, id is handled to onGeoficationClicked method of viewModel
         val myAdapter = MainRecyclerAdapter(GeoficationClickListener { geoficationID ->
-            Toast.makeText(
-                context,
-                geoficationID.toString(),
-                Toast.LENGTH_LONG
-            ).show()
+            mainViewModel.onGeoficationClicked(geoficationID)
         })
         binding.notifList.adapter = myAdapter
 
@@ -84,6 +82,13 @@ class MainFragment : Fragment() {
                 myAdapter.submitGeoficationList(it)
             }
         })
+
+        // Add an Observer on the state variable for Navigating.
+//        mainViewModel.navigateToGeoficationDetails.observe(viewLifecycleOwner, Observer {
+//            it?.let {
+//                this.findNavController()
+//            }
+//        })
 
         return binding.root
     }

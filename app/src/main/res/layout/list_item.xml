@@ -7,6 +7,7 @@
         <variable
             name="exactGeofication"
             type="com.example.geofications.data.Geofication" />
+
         <variable
             name="clickListener"
             type="com.example.geofications.GeoficationClickListener" />
@@ -19,27 +20,28 @@
 
         <TextView
             android:id="@+id/title_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:gravity="center"
+            android:text="@{exactGeofication.title}"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="@{exactGeofication.title}"
             tools:text="Title" />
 
         <TextView
             android:id="@+id/description_textView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@{exactGeofication.description}"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title_textView"
-            android:text="@{exactGeofication.description}"
             tools:text="Description" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

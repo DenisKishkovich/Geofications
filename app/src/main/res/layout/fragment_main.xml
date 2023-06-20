@@ -45,7 +45,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:contentDescription="Add geofication"
-            android:onClick="@{() -> mainViewModel.insertTest()}"
+            android:onClick="@{() -> mainViewModel.insertNewGeodication()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@android:drawable/ic_input_add" />
