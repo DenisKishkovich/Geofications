@@ -9,5 +9,17 @@
         android:id="@+id/mainFragment"
         android:name="com.example.geofications.ui.main.MainFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_geoficationDetailsFragment"
+            app:destination="@id/geoficationDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/geoficationDetailsFragment"
+        android:name="com.example.geofications.ui.details.GeoficationDetailsFragment"
+        android:label="GeoficationDetailsFragment" >
+        <argument
+            android:name="geoficationID"
+            app:argType="long" />
+    </fragment>
 </navigation>

@@ -84,11 +84,12 @@ class MainFragment : Fragment() {
         })
 
         // Add an Observer on the state variable for Navigating.
-//        mainViewModel.navigateToGeoficationDetails.observe(viewLifecycleOwner, Observer {
-//            it?.let {
-//                this.findNavController()
-//            }
-//        })
+        mainViewModel.navigateToGeoficationDetails.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                this.findNavController().navigate(MainFragmentDirections.actionMainFragmentToGeoficationDetailsFragment(it))
+                mainViewModel.onGeoficationClickedNavigated()
+            }
+        })
 
         return binding.root
     }

@@ -74,7 +74,7 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
      * It will clear the navigation request, so if the user rotates their phone it won't navigate
      * twice.
      */
-    fun doneNavigating() {
+    fun onGeoficationClickedNavigated() {
         _navigateToGeoficationDetails.value = null
     }
 }
