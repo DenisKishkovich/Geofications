@@ -1,7 +1,6 @@
 package com.example.geofications.ui.main
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.geofications.data.Geofication

@@ -2,9 +2,20 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+
+        <variable
+            name="exactGeofication"
+            type="com.example.geofications.data.Geofication" />
+        <variable
+            name="clickListener"
+            type="com.example.geofications.GeoficationClickListener" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(exactGeofication)}">
 
         <TextView
             android:id="@+id/title_textView"
@@ -16,6 +27,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:text="@{exactGeofication.title}"
             tools:text="Title" />
 
         <TextView
@@ -27,6 +39,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title_textView"
+            android:text="@{exactGeofication.description}"
             tools:text="Description" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

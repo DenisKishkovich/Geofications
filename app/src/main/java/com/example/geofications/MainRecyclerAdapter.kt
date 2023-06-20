@@ -12,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainRecyclerAdapter():
+class MainRecyclerAdapter(val clickListener: GeoficationClickListener) :
     ListAdapter<Geofication, MainRecyclerAdapter.ViewHolder>(GeoficationDiffCallback()) {
 
     private val adapterScope = CoroutineScope(Dispatchers.Default)
@@ -23,7 +23,7 @@ class MainRecyclerAdapter():
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item)
+        holder.bind(item, clickListener)
     }
 
     /*override fun getItemCount(): Int {
@@ -39,10 +39,12 @@ class MainRecyclerAdapter():
         }
     }
 
-    class ViewHolder private constructor(val binding: ListItemBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Geofication) {
-            binding.titleTextView.text = item.title
-            binding.descriptionTextView.text = item.description
+    class ViewHolder private constructor(val binding: ListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Geofication, clickListener: GeoficationClickListener) {
+            binding.exactGeofication = item
+            binding.clickListener = clickListener
+            binding.executePendingBindings()
         }
 
         companion object {
@@ -56,7 +58,7 @@ class MainRecyclerAdapter():
     }
 }
 
-class GeoficationDiffCallback: DiffUtil.ItemCallback<Geofication>() {
+class GeoficationDiffCallback : DiffUtil.ItemCallback<Geofication>() {
     override fun areItemsTheSame(oldItem: Geofication, newItem: Geofication): Boolean {
         return oldItem.id == newItem.id
     }
@@ -64,5 +66,8 @@ class GeoficationDiffCallback: DiffUtil.ItemCallback<Geofication>() {
     override fun areContentsTheSame(oldItem: Geofication, newItem: Geofication): Boolean {
         return oldItem == newItem
     }
+}
 
+class GeoficationClickListener(val clickListener: (geoficationID: Long) -> Unit) {
+    fun onClick(geofication: Geofication) = clickListener(geofication.id)
 }

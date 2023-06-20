@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.geofications.GeoficationClickListener
 import com.example.geofications.data.Geofication
 import com.example.geofications.MainRecyclerAdapter
 import com.example.geofications.R
@@ -41,7 +42,13 @@ class MainFragment : Fragment() {
         binding.mainViewModel = mainViewModel
         binding.lifecycleOwner = this
 
-        val myAdapter = MainRecyclerAdapter()
+        val myAdapter = MainRecyclerAdapter(GeoficationClickListener { geoficationID ->
+            Toast.makeText(
+                context,
+                geoficationID.toString(),
+                Toast.LENGTH_LONG
+            ).show()
+        })
         binding.notifList.adapter = myAdapter
 
         // Init the menu
@@ -52,7 +59,6 @@ class MainFragment : Fragment() {
         // Note how we can tie the MenuProvider to the viewLifecycleOwner
         // and an optional Lifecycle.State (here, RESUMED) to indicate when
         // the menu should be visible
-
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.main_fragment_menu, menu)
@@ -66,6 +72,7 @@ class MainFragment : Fragment() {
                         Toast.makeText(context, "Database cleared", Toast.LENGTH_SHORT).show()
                         true
                     }
+
                     else -> false
                 }
             }
