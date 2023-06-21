@@ -46,9 +46,7 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
      * Insert new geofication
      */
     fun insertNewGeodication() {
-        onFabClicked()
-
-        viewModelScope.launch {
+            viewModelScope.launch {
             val newGeofication = Geofication(title = "tesst", description = "testDescr")
 
             insert(newGeofication)
@@ -76,6 +74,7 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
      */
     fun onFabClicked() {
         _navigateToGeoficationDetails.value = -1
+        insertNewGeodication()
     }
 
     /**

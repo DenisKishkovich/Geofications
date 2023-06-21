@@ -19,10 +19,6 @@ import com.example.geofications.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
 
-    private lateinit var binding: FragmentMainBinding
-
-    private lateinit var mainViewModel: MainViewModel
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
