@@ -1,7 +1,6 @@
 package com.example.geofications.ui.main
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.view.MenuHost
@@ -13,7 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.geofications.GeoficationClickListener
-import com.example.geofications.data.Geofication
 import com.example.geofications.MainRecyclerAdapter
 import com.example.geofications.R
 import com.example.geofications.data.GeoficationDatabase
@@ -87,7 +85,7 @@ class MainFragment : Fragment() {
         mainViewModel.navigateToGeoficationDetails.observe(viewLifecycleOwner, Observer {
             it?.let {
                 this.findNavController().navigate(MainFragmentDirections.actionMainFragmentToGeoficationDetailsFragment(it))
-                mainViewModel.onGeoficationClickedNavigated()
+                mainViewModel.onGeoficationNavigated()
             }
         })
 

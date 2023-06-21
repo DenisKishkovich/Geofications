@@ -25,7 +25,7 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
     private val _navigateToGeoficationDetails = MutableLiveData<Long?>()
 
     /**
-     * If this is non-null, immediately navigate to GeoficationDeatails Fragment and call [doneNavigating]
+     * If this is non-null, immediately navigate to GeoficationDeatails Fragment and call [onGeoficationNavigated]
      */
     val navigateToGeoficationDetails
         get() = _navigateToGeoficationDetails
@@ -46,6 +46,8 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
      * Insert new geofication
      */
     fun insertNewGeodication() {
+        onFabClicked()
+
         viewModelScope.launch {
             val newGeofication = Geofication(title = "tesst", description = "testDescr")
 
@@ -70,11 +72,18 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
     }
 
     /**
+     * Method to navigate and transfer value -1 to GeoficationDetailsFragment if FAB is clicked
+     */
+    fun onFabClicked() {
+        _navigateToGeoficationDetails.value = -1
+    }
+
+    /**
      * Call this immediately after navigating to GeoficationDeatails Fragment
      * It will clear the navigation request, so if the user rotates their phone it won't navigate
      * twice.
      */
-    fun onGeoficationClickedNavigated() {
+    fun onGeoficationNavigated() {
         _navigateToGeoficationDetails.value = null
     }
 }
