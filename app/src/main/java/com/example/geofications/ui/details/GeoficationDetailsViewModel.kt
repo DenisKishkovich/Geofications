@@ -17,38 +17,42 @@ class GeoficationDetailsViewModel(
 
     private var isNewGeofication: Boolean = false
 
-    private var loadedGeofication = MutableLiveData<Geofication?>()
-
     val title = MutableLiveData<String?>()
     val description = MutableLiveData<String>()
 
     init {
-        Log.i("ID CHECK", geoficationID.toString())
         if (geoficationID == -1L) {
             isNewGeofication = true
         }
-        Log.i("ISNEW CHECK", isNewGeofication.toString())
+
         if (!isNewGeofication) {
-            loadGeoficationById(geoficationID)
-
-            if (loadedGeofication.value == null) {
-                Log.i("LOAD CHECK", "loaded null")
-            }
-
-            Log.i("LOAD CHECK", "loaded")
-            title.value = loadedGeofication.value?.title
-            Log.i("TITLE CHECK", title.value ?: "null")
-            description.value = loadedGeofication.value?.description
+            loadGeoficationParams(geoficationID)
+        } else {
+            title.value = "New title"
+            description.value = "New description"
         }
     }
 
-    private suspend fun getGeofication(geoficationId: Long): Geofication? {
-        return database.getGeoficationById(geoficationId)
+    /**
+     * Method to get geof. from database by id
+     */
+    private suspend fun getGeofication(geoficationId: Long): Geofication? = withContext(Dispatchers.IO) {
+        return@withContext database.getGeoficationById(geoficationId)
     }
 
-    fun loadGeoficationById(geoficationID: Long) {
+    /**
+     * Method to get geof's params by id
+     */
+    private fun loadGeoficationParams(geoficationID: Long) {
         viewModelScope.launch {
-            loadedGeofication.value = getGeofication(geoficationID)
+            val geofication = getGeofication(geoficationID)
+
+            if (geofication != null) {
+                title.value = geofication.title
+                description.value = geofication.description
+            } else {
+                throw Exception("Geofication not found")
+            }
         }
     }
 }
