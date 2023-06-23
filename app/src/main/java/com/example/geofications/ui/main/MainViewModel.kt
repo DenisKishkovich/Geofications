@@ -73,7 +73,7 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
      * Method to navigate and transfer value -1 to GeoficationDetailsFragment if FAB is clicked
      */
     fun onFabClicked() {
-        _navigateToGeoficationDetails.value = -1
+        _navigateToGeoficationDetails.value = -1L
         insertNewGeodication()
     }
 

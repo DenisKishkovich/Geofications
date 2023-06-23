@@ -37,6 +37,9 @@ class GeoficationDetailsFragment() : Fragment() {
         val viewModelFactory = GeoficationDetailsViewModelFactory(dataSource, argGeoficationID)
         val geoficationDetailsViewModel = ViewModelProvider(this, viewModelFactory).get(GeoficationDetailsViewModel::class.java)
 
+        binding.viewModel = geoficationDetailsViewModel
+        binding.lifecycleOwner = this
+
         return binding.root
     }
 }
