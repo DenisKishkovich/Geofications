@@ -12,12 +12,15 @@ import kotlinx.coroutines.withContext
 
 class GeoficationDetailsViewModel(
     private val database: GeoficationDao,
-    private val geoficationID: Long
+    geoficationID: Long
 ) : ViewModel() {
 
     private var isNewGeofication: Boolean = false
 
+    // Two-way databinding, exposing MutableLiveData
     val title = MutableLiveData<String?>()
+
+    // Two-way databinding, exposing MutableLiveData
     val description = MutableLiveData<String>()
 
     init {
@@ -54,5 +57,13 @@ class GeoficationDetailsViewModel(
                 throw Exception("Geofication not found")
             }
         }
+    }
+
+    fun saveGeofication() {
+        val currentTitle = title.value
+        val currentDescription = description.value
+
+        Log.i("SAVE TITLE", currentTitle!!)
+        Log.i("SAVE DESCR", currentDescription!!)
     }
 }
