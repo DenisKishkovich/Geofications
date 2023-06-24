@@ -30,26 +30,9 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
     val navigateToGeoficationDetails
         get() = _navigateToGeoficationDetails
 
-    private suspend fun insert(geofication: Geofication) {
-        withContext(Dispatchers.IO) {
-            database.insertGeofication(geofication)
-        }
-    }
-
     private suspend fun clearAll() {
         withContext(Dispatchers.IO) {
             database.deleteAllGeofications()
-        }
-    }
-
-    /**
-     * Insert new geofication
-     */
-    fun insertNewGeodication() {
-            viewModelScope.launch {
-            val newGeofication = Geofication(title = "tesst", description = "testDescr")
-
-            insert(newGeofication)
         }
     }
 
@@ -74,7 +57,6 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
      */
     fun onFabClicked() {
         _navigateToGeoficationDetails.value = -1L
-        insertNewGeodication()
     }
 
     /**

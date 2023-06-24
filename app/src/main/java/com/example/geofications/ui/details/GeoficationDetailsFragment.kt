@@ -32,7 +32,6 @@ class GeoficationDetailsFragment() : Fragment() {
 
         // Geofication ID from args
         val argGeoficationID = args.geoficationID
-        Toast.makeText(context, argGeoficationID.toString(), Toast.LENGTH_LONG).show()
 
         val viewModelFactory = GeoficationDetailsViewModelFactory(dataSource, argGeoficationID)
         val geoficationDetailsViewModel = ViewModelProvider(this, viewModelFactory).get(GeoficationDetailsViewModel::class.java)

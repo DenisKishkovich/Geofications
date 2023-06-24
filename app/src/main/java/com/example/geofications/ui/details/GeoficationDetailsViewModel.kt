@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 
 class GeoficationDetailsViewModel(
     private val database: GeoficationDao,
-    geoficationID: Long
+    private val geoficationID: Long
 ) : ViewModel() {
 
     private var isNewGeofication: Boolean = false
@@ -59,11 +59,54 @@ class GeoficationDetailsViewModel(
         }
     }
 
+    /**
+     * Save geofication. It starts when save button is clicked
+     */
     fun saveGeofication() {
-        val currentTitle = title.value
-        val currentDescription = description.value
+        val currentTitle = title.value!!
+        val currentDescription = description.value!!
 
-        Log.i("SAVE TITLE", currentTitle!!)
-        Log.i("SAVE DESCR", currentDescription!!)
+        if (isNewGeofication) {
+            createNewGeofication(Geofication(title = currentTitle, description = currentDescription))
+        } else {
+            val currentId = geoficationID
+            updateCurrentGeofication(Geofication(currentId, currentTitle, currentDescription))
+        }
+    }
+
+    /**
+     * Insert new geofication into database
+     */
+    private suspend fun insertGeofication(geofication: Geofication) {
+        withContext(Dispatchers.IO) {
+            database.insertGeofication(geofication)
+        }
+    }
+
+    /**
+     * Launch creating new grofication
+     */
+    private fun createNewGeofication(geofication: Geofication) {
+        viewModelScope.launch{
+            insertGeofication(geofication)
+        }
+    }
+
+    /**
+     * Update geofication in database
+     */
+    private suspend fun updateGeofication(geofication: Geofication) {
+        withContext(Dispatchers.IO) {
+            database.updateGeofication(geofication)
+        }
+    }
+
+    /**
+     * Launch updating current geofication
+     */
+    private fun updateCurrentGeofication(geofication: Geofication) {
+        viewModelScope.launch {
+            updateGeofication(geofication)
+        }
     }
 }
