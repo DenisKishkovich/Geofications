@@ -12,7 +12,8 @@
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_mainFragment_to_geoficationDetailsFragment"
-            app:destination="@id/geoficationDetailsFragment" />
+            app:destination="@id/geoficationDetailsFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/geoficationDetailsFragment"

@@ -1,6 +1,7 @@
 package com.example.geofications.ui.details
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,6 +23,18 @@ class GeoficationDetailsViewModel(
 
     // Two-way databinding, exposing MutableLiveData
     val description = MutableLiveData<String>()
+
+    /**
+     * Variable that tells to navigate to a MainFragment.
+     * This is private because we don't want to expose setting this value to the Fragment.
+     */
+    private val _navigateToMain = MutableLiveData<Boolean>()
+
+    /**
+     * When true immediately navigate back to the MainFragment
+     */
+    val navigateToMain: LiveData<Boolean>
+        get() = _navigateToMain
 
     init {
         if (geoficationID == -1L) {
@@ -72,6 +85,7 @@ class GeoficationDetailsViewModel(
             val currentId = geoficationID
             updateCurrentGeofication(Geofication(currentId, currentTitle, currentDescription))
         }
+        _navigateToMain.value = true
     }
 
     /**
@@ -108,5 +122,14 @@ class GeoficationDetailsViewModel(
         viewModelScope.launch {
             updateGeofication(geofication)
         }
+    }
+
+    /**
+     * Call this immediately after navigating to MainFragment
+     * It will clear the navigation request, so if the user rotates their phone it won't navigate
+     * twice.
+     */
+    fun doneNavigating() {
+        _navigateToMain.value = false
     }
 }
