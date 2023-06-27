@@ -52,9 +52,10 @@ class GeoficationDetailsViewModel(
     /**
      * Method to get geof. from database by id
      */
-    private suspend fun getGeofication(geoficationId: Long): Geofication? = withContext(Dispatchers.IO) {
-        return@withContext database.getGeoficationById(geoficationId)
-    }
+    private suspend fun getGeofication(geoficationId: Long): Geofication? =
+        withContext(Dispatchers.IO) {
+            return@withContext database.getGeoficationById(geoficationId)
+        }
 
     /**
      * Method to get geof's params by id
@@ -80,7 +81,12 @@ class GeoficationDetailsViewModel(
         val currentDescription = description.value!!
 
         if (isNewGeofication) {
-            createNewGeofication(Geofication(title = currentTitle, description = currentDescription))
+            createNewGeofication(
+                Geofication(
+                    title = currentTitle,
+                    description = currentDescription
+                )
+            )
         } else {
             val currentId = geoficationID
             updateCurrentGeofication(Geofication(currentId, currentTitle, currentDescription))
@@ -101,7 +107,7 @@ class GeoficationDetailsViewModel(
      * Launch creating new grofication
      */
     private fun createNewGeofication(geofication: Geofication) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             insertGeofication(geofication)
         }
     }
@@ -131,5 +137,26 @@ class GeoficationDetailsViewModel(
      */
     fun doneNavigating() {
         _navigateToMain.value = false
+    }
+
+    /**
+     * Delete geofication from database
+     */
+    private suspend fun deleteGeoficationFromDb(geoficationId: Long) {
+        withContext(Dispatchers.IO) {
+            database.deleteGeoficationById(geoficationId)
+        }
+    }
+
+    /**
+     * Launch deleting current geofication
+     */
+    fun deleteGeofication() {
+        if (geoficationID != -1L) {
+            viewModelScope.launch {
+                deleteGeoficationFromDb(geoficationID)
+            }
+            _navigateToMain.value = true
+        }
     }
 }

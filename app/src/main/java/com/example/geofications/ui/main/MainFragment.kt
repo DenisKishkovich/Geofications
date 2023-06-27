@@ -19,6 +19,8 @@ import com.example.geofications.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
 
+    private lateinit var mainViewModel: MainViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,10 +34,13 @@ class MainFragment : Fragment() {
 
         val viewModelFactory = MainViewModelFactory(dataSource, application)
 
-        val mainViewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
 
         binding.mainViewModel = mainViewModel
         binding.lifecycleOwner = this
+
+        // Create the menu
+        createMenu()
 
         // Creating an adapter with click listener. Once is clicked, id is handled to onGeoficationClicked method of viewModel
         val myAdapter = MainRecyclerAdapter(GeoficationClickListener { geoficationID ->
@@ -43,6 +48,32 @@ class MainFragment : Fragment() {
         })
         binding.notifList.adapter = myAdapter
 
+        // Refresh recycler view as database changes
+        mainViewModel.geoficationList.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                myAdapter.submitGeoficationList(it)
+            }
+        })
+
+        // Add an Observer on the state variable for Navigating.
+        mainViewModel.navigateToGeoficationDetails.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val argAppBarTitle = if (it == -1L) "Add notification" else "Edit notification"
+
+                this.findNavController().navigate(
+                        MainFragmentDirections.actionMainFragmentToGeoficationDetailsFragment(it, argAppBarTitle)
+                    )
+                mainViewModel.onGeoficationNavigated()
+            }
+        })
+
+        return binding.root
+    }
+
+    /**
+     * Create the menu
+     */
+    private fun createMenu() {
         // Init the menu
         // The usage of an interface lets you inject your own implementation
         val menuHost: MenuHost = requireActivity()
@@ -69,25 +100,5 @@ class MainFragment : Fragment() {
                 }
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
-
-        // Refresh recycler view as database changes
-        mainViewModel.geoficationList.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                myAdapter.submitGeoficationList(it)
-            }
-        })
-
-        // Add an Observer on the state variable for Navigating.
-        mainViewModel.navigateToGeoficationDetails.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                val argAppBarTitle = if (it == -1L) "Add notification" else "Edit notification"
-                    this.findNavController().navigate(
-                        MainFragmentDirections.actionMainFragmentToGeoficationDetailsFragment(it, argAppBarTitle)
-                    )
-                mainViewModel.onGeoficationNavigated()
-            }
-        })
-
-        return binding.root
     }
 }
