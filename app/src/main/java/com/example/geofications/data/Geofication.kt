@@ -13,5 +13,11 @@ data class Geofication(
     var title: String = "",
 
     @ColumnInfo(name = "geof_description")
-    var description: String = ""
-)
+    var description: String = "",
+
+    @ColumnInfo
+    var isCompleted: Boolean = false
+) {
+    val isEmpty
+        get() = title.isEmpty() && description.isEmpty()
+}

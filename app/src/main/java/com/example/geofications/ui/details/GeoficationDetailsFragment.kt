@@ -1,6 +1,9 @@
 package com.example.geofications.ui.details
 
+import android.content.Context
+import android.inputmethodservice.InputMethodService
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -8,6 +11,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -21,17 +26,23 @@ import com.example.geofications.R
 import com.example.geofications.data.GeoficationDao
 import com.example.geofications.data.GeoficationDatabase
 import com.example.geofications.databinding.FragmentGeoficationDetailsBinding
+import com.google.android.material.snackbar.Snackbar
 
 class GeoficationDetailsFragment() : Fragment() {
 
     private lateinit var geoficationDetailsViewModel: GeoficationDetailsViewModel
 
+    private lateinit var binding: FragmentGeoficationDetailsBinding
+
+    private var argGeoficationID = -1L
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding: FragmentGeoficationDetailsBinding = DataBindingUtil.inflate(
-            inflater, R.layout.fragment_geofication_details, container, false)
+        binding = DataBindingUtil.inflate(
+            inflater, R.layout.fragment_geofication_details, container, false
+        )
 
         val application = requireNotNull(this.activity).application
 
@@ -41,10 +52,11 @@ class GeoficationDetailsFragment() : Fragment() {
         val args = GeoficationDetailsFragmentArgs.fromBundle(requireArguments())
 
         // Geofication ID from args
-        val argGeoficationID = args.geoficationID
+        argGeoficationID = args.geoficationID
 
         val viewModelFactory = GeoficationDetailsViewModelFactory(dataSource, argGeoficationID)
-        geoficationDetailsViewModel = ViewModelProvider(this, viewModelFactory).get(GeoficationDetailsViewModel::class.java)
+        geoficationDetailsViewModel =
+            ViewModelProvider(this, viewModelFactory).get(GeoficationDetailsViewModel::class.java)
 
         binding.viewModel = geoficationDetailsViewModel
         binding.lifecycleOwner = this
@@ -62,7 +74,25 @@ class GeoficationDetailsFragment() : Fragment() {
             }
         })
 
+        // Add an Observer on the state variable for snackbars.
+        geoficationDetailsViewModel.snackbarText.observe(viewLifecycleOwner, Observer {
+            view?.let { gottenView -> Snackbar.make(gottenView, it, Snackbar.LENGTH_SHORT).show() }
+        })
+
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Show keyboard if new notification
+        val descriptionEditText = binding.description
+        if (argGeoficationID == -1L) {
+            descriptionEditText.requestFocus()
+
+            val imm = requireActivity().getSystemService(InputMethodManager::class.java)
+            imm.showSoftInput(descriptionEditText, InputMethodManager.SHOW_IMPLICIT)
+        }
     }
 
     /**
@@ -77,7 +107,7 @@ class GeoficationDetailsFragment() : Fragment() {
         // Note how we can tie the MenuProvider to the viewLifecycleOwner
         // and an optional Lifecycle.State (here, RESUMED) to indicate when
         // the menu should be visible
-        menuHost.addMenuProvider(object: MenuProvider {
+        menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.details_fragment_menu, menu)
             }
@@ -89,6 +119,7 @@ class GeoficationDetailsFragment() : Fragment() {
                         Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show()
                         true
                     }
+
                     else -> false
                 }
             }

@@ -36,6 +36,17 @@ class GeoficationDetailsViewModel(
     val navigateToMain: LiveData<Boolean>
         get() = _navigateToMain
 
+    /**
+     * "Inner" variable which triggers the snackbar
+     */
+    private val _snackbarText = MutableLiveData<String>()
+
+    /**
+     * When changes immediately triggers the snackbar
+     */
+    val snackbarText: LiveData<String>
+        get() = _snackbarText
+
     init {
         if (geoficationID == -1L) {
             isNewGeofication = true
@@ -44,8 +55,8 @@ class GeoficationDetailsViewModel(
         if (!isNewGeofication) {
             loadGeoficationParams(geoficationID)
         } else {
-            title.value = "New title"
-            description.value = "New description"
+            title.value = ""
+            description.value = ""
         }
     }
 
@@ -77,8 +88,28 @@ class GeoficationDetailsViewModel(
      * Save geofication. It starts when save button is clicked
      */
     fun saveGeofication() {
-        val currentTitle = title.value!!
-        val currentDescription = description.value!!
+        val currentTitle = title.value
+        val currentDescription = description.value
+
+        // Null check
+        if (currentTitle == null || currentDescription == null) {
+            _snackbarText.value = "Empty notification deleted"
+            if (!isNewGeofication) {
+                deleteGeofication()
+            } else {
+                _navigateToMain.value = true
+            }
+            return
+        }
+        if (Geofication(title = currentTitle, description = currentDescription).isEmpty) {
+            _snackbarText.value = "Empty notification deleted"
+            if (!isNewGeofication) {
+                deleteGeofication()
+            } else {
+                _navigateToMain.value = true
+            }
+            return
+        }
 
         if (isNewGeofication) {
             createNewGeofication(
@@ -152,11 +183,12 @@ class GeoficationDetailsViewModel(
      * Launch deleting current geofication
      */
     fun deleteGeofication() {
-        if (geoficationID != -1L) {
+        if (!isNewGeofication) {
             viewModelScope.launch {
                 deleteGeoficationFromDb(geoficationID)
             }
             _navigateToMain.value = true
-        }
+        } else
+            throw RuntimeException("deleteGeofication() was called for a new geofication")
     }
 }
