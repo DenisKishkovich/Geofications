@@ -45,7 +45,7 @@ class MainFragment : Fragment() {
         // Creating an adapter with click listener. Once is clicked, id is handled to onGeoficationClicked method of viewModel
         val myAdapter = MainRecyclerAdapter(GeoficationClickListener { geoficationID ->
             mainViewModel.onGeoficationClicked(geoficationID)
-        })
+        }, mainViewModel)
         binding.notifList.adapter = myAdapter
 
         // Refresh recycler view as database changes

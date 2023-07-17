@@ -22,7 +22,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <EditText
                     android:id="@+id/title"
@@ -31,9 +32,12 @@
                     android:text="@={viewModel.title}"
                     android:textSize="30sp"
                     tools:text="Title"
-                    android:hint="Title"
+                    android:hint="Notification"
                     android:maxLines="3"
-                    android:imeOptions="actionNext"/>
+                    android:maxLength="30"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:scrollHorizontally="false"
+                    android:background="@android:color/transparent"/>
 
                 <EditText
                     android:id="@+id/description"
@@ -43,7 +47,9 @@
                     android:text="@={viewModel.description}"
                     android:textSize="20sp"
                     tools:text="Description"
-                    android:hint="Description"/>
+                    android:hint="Description"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:background="@android:color/transparent"/>
             </LinearLayout>
         </ScrollView>
 

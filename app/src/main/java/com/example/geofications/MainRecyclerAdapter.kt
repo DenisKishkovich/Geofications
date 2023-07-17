@@ -1,18 +1,23 @@
 package com.example.geofications
 
+import android.opengl.Visibility
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geofications.data.Geofication
 import com.example.geofications.databinding.ListItemBinding
+import com.example.geofications.ui.main.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainRecyclerAdapter(val clickListener: GeoficationClickListener) :
+class MainRecyclerAdapter(val clickListener: GeoficationClickListener, private val viewModel: MainViewModel) :
     ListAdapter<Geofication, MainRecyclerAdapter.ViewHolder>(GeoficationDiffCallback()) {
 
     private val adapterScope = CoroutineScope(Dispatchers.Default)
@@ -23,12 +28,8 @@ class MainRecyclerAdapter(val clickListener: GeoficationClickListener) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item, clickListener)
+        holder.bind(item, clickListener, viewModel)
     }
-
-    /*override fun getItemCount(): Int {
-        return data.size
-    }*/
 
     // Needed to refresh list
     fun submitGeoficationList(geoficationsList: List<Geofication>?) {
@@ -41,8 +42,30 @@ class MainRecyclerAdapter(val clickListener: GeoficationClickListener) :
 
     class ViewHolder private constructor(val binding: ListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: Geofication, clickListener: GeoficationClickListener) {
+        fun bind(item: Geofication, clickListener: GeoficationClickListener, viewModel: MainViewModel) {
             binding.exactGeofication = item
+            binding.viewModel = viewModel
+
+            // Set appearance
+            if (item.title.isEmpty()) {
+                binding.titleTextView.visibility = View.GONE
+                binding.descriptionTextView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    topToTop = binding.checkBox.id
+                    bottomToBottom = binding.checkBox.id
+                }
+            } else {
+                binding.titleTextView.visibility = View.VISIBLE
+                binding.descriptionTextView.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    topToTop = ConstraintLayout.LayoutParams.UNSET
+                    bottomToBottom = ConstraintLayout.LayoutParams.UNSET
+                }
+            }
+            if (item.description.isEmpty()) {
+                binding.descriptionTextView.visibility = View.GONE
+            } else {
+                binding.descriptionTextView.visibility = View.VISIBLE
+            }
+
             binding.clickListener = clickListener
             binding.executePendingBindings()
         }

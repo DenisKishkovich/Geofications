@@ -44,4 +44,10 @@ interface GeoficationDao {
      */
     @Query("DELETE FROM geofications_table")
     suspend fun deleteAllGeofications()
+
+    /**
+     * Update completed state of a geof.
+     */
+    @Query("UPDATE geofications_table SET isCompleted = :isCompleted WHERE id = :geoficationId")
+    suspend fun updateCompleted(geoficationId: Long, isCompleted: Boolean)
 }
