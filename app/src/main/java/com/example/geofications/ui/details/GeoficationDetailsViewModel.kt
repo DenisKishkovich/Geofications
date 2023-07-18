@@ -24,6 +24,8 @@ class GeoficationDetailsViewModel(
     // Two-way databinding, exposing MutableLiveData
     val description = MutableLiveData<String>()
 
+    val isCompleted = MutableLiveData<Boolean>()
+
     /**
      * Variable that tells to navigate to a MainFragment.
      * This is private because we don't want to expose setting this value to the Fragment.
@@ -57,6 +59,7 @@ class GeoficationDetailsViewModel(
         } else {
             title.value = ""
             description.value = ""
+            isCompleted.value = false
         }
     }
 
@@ -78,6 +81,7 @@ class GeoficationDetailsViewModel(
             if (geofication != null) {
                 title.value = geofication.title
                 description.value = geofication.description
+                isCompleted.value = geofication.isCompleted
             } else {
                 throw Exception("Geofication not found")
             }
@@ -90,9 +94,10 @@ class GeoficationDetailsViewModel(
     fun saveGeofication() {
         val currentTitle = title.value
         val currentDescription = description.value
+        val currentIsCompleted = isCompleted.value
 
         // Null check
-        if (currentTitle == null || currentDescription == null) {
+        if (currentTitle == null || currentDescription == null || currentIsCompleted == null) {
             _snackbarText.value = "Empty notification deleted"
             if (!isNewGeofication) {
                 deleteGeofication()
@@ -120,7 +125,7 @@ class GeoficationDetailsViewModel(
             )
         } else {
             val currentId = geoficationID
-            updateCurrentGeofication(Geofication(currentId, currentTitle, currentDescription))
+            updateCurrentGeofication(Geofication(currentId, currentTitle, currentDescription, currentIsCompleted))
         }
         _navigateToMain.value = true
     }

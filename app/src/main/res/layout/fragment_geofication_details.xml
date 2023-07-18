@@ -15,41 +15,62 @@
         android:layout_height="match_parent"
         tools:context=".ui.details.GeoficationDetailsFragment">
 
-        <ScrollView
+        <CheckBox
+            android:id="@+id/checkBoxInDetails"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="wrap_content"
+            android:text="Completed"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            android:checked="@={viewModel.isCompleted}"/>
+
+        <ScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/checkBoxInDetails"
+            app:layout_constraintVertical_bias="0.0"
+            tools:layout_editor_absoluteX="-26dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingStart="16dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="16dp">
 
                 <EditText
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:hint="Notification"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:maxLength="30"
+                    android:maxLines="3"
+                    android:scrollHorizontally="false"
                     android:text="@={viewModel.title}"
                     android:textSize="30sp"
-                    tools:text="Title"
-                    android:hint="Notification"
-                    android:maxLines="3"
-                    android:maxLength="30"
-                    android:inputType="textMultiLine|textCapSentences"
-                    android:scrollHorizontally="false"
-                    android:background="@android:color/transparent"/>
+                    tools:text="Title" />
 
                 <EditText
                     android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="@={viewModel.description}"
-                    android:textSize="20sp"
-                    tools:text="Description"
+                    android:background="@android:color/transparent"
                     android:hint="Description"
                     android:inputType="textMultiLine|textCapSentences"
-                    android:background="@android:color/transparent"/>
+                    android:text="@={viewModel.description}"
+                    android:textSize="20sp"
+                    tools:text="Description" />
             </LinearLayout>
         </ScrollView>
 

@@ -66,6 +66,11 @@ class GeoficationDetailsFragment() : Fragment() {
             createMenu()
         }
 
+        //Hide checkbox if new geofication
+        if (argGeoficationID == -1L) {
+            binding.checkBoxInDetails.visibility = View.GONE
+        }
+
         // Add an Observer on the state variable for Navigating.
         geoficationDetailsViewModel.navigateToMain.observe(viewLifecycleOwner, Observer {
             if (it == true) {

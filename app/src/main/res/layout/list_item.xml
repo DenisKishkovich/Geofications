@@ -66,6 +66,7 @@
             android:onClick="@{(view) -> viewModel.completeGeofication(exactGeofication, ((CompoundButton)view).isChecked())}"
             />
 
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
