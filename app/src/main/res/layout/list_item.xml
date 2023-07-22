@@ -41,7 +41,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/checkBox"
             app:layout_constraintTop_toTopOf="@+id/checkBox"
-            tools:text="Title"/>
+            tools:text="Title"
+            app:completedGeofication="@{exactGeofication.isCompleted}"/>
 
         <TextView
             android:id="@+id/description_textView"
@@ -54,7 +55,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/checkBox"
             app:layout_constraintTop_toBottomOf="@+id/title_textView"
-            tools:text="Description" />
+            tools:text="Description"
+            app:completedGeofication="@{exactGeofication.isCompleted}"/>
 
         <CheckBox
             android:id="@+id/checkBox"
