@@ -3,8 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/create_geofication_menu_item"
+        android:icon="@android:drawable/ic_popup_reminder"
+        android:title="@string/create_notification"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/delete_menu_item"
         android:icon="@android:drawable/ic_menu_delete"
-        android:title="Delete"
-        app:showAsAction="always" />
+        android:title="@string/delete"
+        app:showAsAction="ifRoom" />
 </menu>

@@ -6,4 +6,7 @@
     <string name="description">Description</string>
     <string name="notification_deleted">Deleted</string>
     <string name="empty_notif_deleted">Empty notification deleted</string>
+    <string name="delete">Delete</string>
+    <string name="create_notification">Create notification</string>
+    <string name="delete_all_notifications">Delete all</string>
 </resources>
