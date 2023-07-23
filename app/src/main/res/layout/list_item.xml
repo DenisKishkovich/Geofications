@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -24,8 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{() -> clickListener.onClick(exactGeofication)}"
-        android:paddingTop="8dp"
         android:paddingStart="16dp"
+        android:paddingTop="8dp"
         android:paddingEnd="16dp">
 
         <TextView
@@ -37,12 +37,12 @@
             android:text="@{exactGeofication.title}"
             android:textSize="26sp"
             android:textStyle="bold"
+            app:completedGeofication="@{exactGeofication.isCompleted}"
             app:layout_constraintBottom_toBottomOf="@+id/checkBox"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/checkBox"
             app:layout_constraintTop_toTopOf="@+id/checkBox"
-            tools:text="Title"
-            app:completedGeofication="@{exactGeofication.isCompleted}"/>
+            tools:text="Title" />
 
         <TextView
             android:id="@+id/description_textView"
@@ -52,21 +52,20 @@
             android:maxLines="3"
             android:text="@{exactGeofication.description}"
             android:textSize="22sp"
+            app:completedGeofication="@{exactGeofication.isCompleted}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/checkBox"
             app:layout_constraintTop_toBottomOf="@+id/title_textView"
-            tools:text="Description"
-            app:completedGeofication="@{exactGeofication.isCompleted}"/>
+            tools:text="Description" />
 
         <CheckBox
             android:id="@+id/checkBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:checked="@{exactGeofication.isCompleted}"
             android:onClick="@{(view) -> viewModel.completeGeofication(exactGeofication, ((CompoundButton)view).isChecked())}"
-            />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

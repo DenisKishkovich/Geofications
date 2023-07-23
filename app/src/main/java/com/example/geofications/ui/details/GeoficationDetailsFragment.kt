@@ -1,29 +1,23 @@
 package com.example.geofications.ui.details
 
-import android.content.Context
-import android.inputmethodservice.InputMethodService
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import androidx.navigation.fragment.findNavController
 import com.example.geofications.R
-import com.example.geofications.data.GeoficationDao
 import com.example.geofications.data.GeoficationDatabase
 import com.example.geofications.databinding.FragmentGeoficationDetailsBinding
 import com.google.android.material.snackbar.Snackbar
@@ -39,7 +33,7 @@ class GeoficationDetailsFragment() : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_geofication_details, container, false
         )
@@ -81,7 +75,7 @@ class GeoficationDetailsFragment() : Fragment() {
 
         // Add an Observer on the state variable for snackbars.
         geoficationDetailsViewModel.snackbarText.observe(viewLifecycleOwner, Observer {
-            view?.let { gottenView -> Snackbar.make(gottenView, it, Snackbar.LENGTH_SHORT).show() }
+            view?.let { gottenView -> Snackbar.make(gottenView, getText(it), Snackbar.LENGTH_SHORT).show() }
         })
 
         return binding.root
@@ -121,7 +115,7 @@ class GeoficationDetailsFragment() : Fragment() {
                 return when (menuItem.itemId) {
                     R.id.delete_menu_item -> {
                         geoficationDetailsViewModel.deleteGeofication()
-                        Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, R.string.notification_deleted, Toast.LENGTH_SHORT).show()
                         true
                     }
 

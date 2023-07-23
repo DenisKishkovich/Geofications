@@ -19,7 +19,7 @@
             android:id="@+id/checkBoxInDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Completed"
+            android:text="@string/completed_text"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -51,14 +51,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
-                    android:hint="Notification"
+                    android:hint="@string/notification_text"
                     android:inputType="textMultiLine|textCapSentences"
                     android:maxLength="30"
                     android:maxLines="3"
                     android:scrollHorizontally="false"
                     android:text="@={viewModel.title}"
                     android:textSize="30sp"
-                    tools:text="Title" />
+                    tools:text="Title"
+                    android:importantForAutofill="no" />
 
                 <EditText
                     android:id="@+id/description"
@@ -66,11 +67,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:background="@android:color/transparent"
-                    android:hint="Description"
+                    android:hint="@string/description"
                     android:inputType="textMultiLine|textCapSentences"
                     android:text="@={viewModel.description}"
                     android:textSize="20sp"
-                    tools:text="Description" />
+                    tools:text="Description"
+                    android:importantForAutofill="no" />
             </LinearLayout>
         </ScrollView>
 
@@ -80,11 +82,11 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            android:clickable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="?android:attr/textCheckMark"
-            android:onClick="@{() -> viewModel.saveGeofication()}"/>
+            android:onClick="@{() -> viewModel.saveGeofication()}"
+            android:contentDescription="@string/fab_description_add_geofication" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

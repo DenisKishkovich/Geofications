@@ -1,10 +1,10 @@
 package com.example.geofications.ui.details
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.geofications.R
 import com.example.geofications.data.Geofication
 import com.example.geofications.data.GeoficationDao
 import kotlinx.coroutines.Dispatchers
@@ -41,12 +41,12 @@ class GeoficationDetailsViewModel(
     /**
      * "Inner" variable which triggers the snackbar
      */
-    private val _snackbarText = MutableLiveData<String>()
+    private val _snackbarText = MutableLiveData<Int>()
 
     /**
      * When changes immediately triggers the snackbar
      */
-    val snackbarText: LiveData<String>
+    val snackbarText: LiveData<Int>
         get() = _snackbarText
 
     init {
@@ -98,7 +98,7 @@ class GeoficationDetailsViewModel(
 
         // Null check
         if (currentTitle == null || currentDescription == null || currentIsCompleted == null) {
-            _snackbarText.value = "Empty notification deleted"
+            _snackbarText.value = R.string.empty_notif_deleted
             if (!isNewGeofication) {
                 deleteGeofication()
             } else {
@@ -107,7 +107,7 @@ class GeoficationDetailsViewModel(
             return
         }
         if (Geofication(title = currentTitle, description = currentDescription).isEmpty) {
-            _snackbarText.value = "Empty notification deleted"
+            _snackbarText.value = R.string.empty_notif_deleted
             if (!isNewGeofication) {
                 deleteGeofication()
             } else {
