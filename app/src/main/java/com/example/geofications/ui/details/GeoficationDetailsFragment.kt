@@ -56,9 +56,10 @@ class GeoficationDetailsFragment() : Fragment() {
         binding.lifecycleOwner = this
 
         // Create the menu
-        if (argGeoficationID != -1L) {
-            createMenu()
-        }
+//        if (argGeoficationID != -1L) {
+//            createMenu()
+//        }
+        createMenu()
 
         //Hide checkbox if new geofication
         if (argGeoficationID == -1L) {
@@ -85,12 +86,12 @@ class GeoficationDetailsFragment() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Show keyboard if new notification
-        val descriptionEditText = binding.description
+        val titleEditText = binding.title
         if (argGeoficationID == -1L) {
-            descriptionEditText.requestFocus()
+            titleEditText.requestFocus()
 
             val imm = requireActivity().getSystemService(InputMethodManager::class.java)
-            imm.showSoftInput(descriptionEditText, InputMethodManager.SHOW_IMPLICIT)
+            imm.showSoftInput(titleEditText, InputMethodManager.SHOW_IMPLICIT)
         }
     }
 
@@ -109,14 +110,28 @@ class GeoficationDetailsFragment() : Fragment() {
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.details_fragment_menu, menu)
+
+                // Don't show delete button if new geofication
+                if (argGeoficationID == -1L) {
+                    menu.findItem(R.id.delete_menu_item).isVisible = false
+                }
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
                     R.id.delete_menu_item -> {
+                        if (argGeoficationID == -1L) {
+                            return false
+                        }
+
                         geoficationDetailsViewModel.deleteGeofication()
                         Toast.makeText(context, R.string.notification_deleted, Toast.LENGTH_SHORT).show()
                         true
+                    }
+
+                    R.id.create_notification_menu_item -> {
+                        //TODO
+                        false
                     }
 
                     else -> false

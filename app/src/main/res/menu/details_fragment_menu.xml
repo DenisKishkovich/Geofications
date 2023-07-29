@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/create_geofication_menu_item"
+        android:id="@+id/create_notification_menu_item"
         android:icon="@android:drawable/ic_popup_reminder"
         android:title="@string/create_notification"
         app:showAsAction="always" />

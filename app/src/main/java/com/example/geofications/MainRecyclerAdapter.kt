@@ -44,27 +44,6 @@ class MainRecyclerAdapter(val clickListener: GeoficationClickListener, private v
         fun bind(item: Geofication, clickListener: GeoficationClickListener, viewModel: MainViewModel) {
             binding.exactGeofication = item
             binding.viewModel = viewModel
-
-            // Set appearance
-            if (item.title.isEmpty()) {
-                binding.titleTextView.visibility = View.GONE
-                binding.descriptionTextView.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    topToTop = binding.checkBox.id
-                    bottomToBottom = binding.checkBox.id
-                }
-            } else {
-                binding.titleTextView.visibility = View.VISIBLE
-                binding.descriptionTextView.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    topToTop = ConstraintLayout.LayoutParams.UNSET
-                    bottomToBottom = ConstraintLayout.LayoutParams.UNSET
-                }
-            }
-            if (item.description.isEmpty()) {
-                binding.descriptionTextView.visibility = View.GONE
-            } else {
-                binding.descriptionTextView.visibility = View.VISIBLE
-            }
-
             binding.clickListener = clickListener
             binding.executePendingBindings()
         }

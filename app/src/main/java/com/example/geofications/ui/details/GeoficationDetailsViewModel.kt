@@ -115,6 +115,10 @@ class GeoficationDetailsViewModel(
             }
             return
         }
+        if (currentTitle.isEmpty()){
+            _snackbarText.value = R.string.notif_empty
+            return
+        }
 
         if (isNewGeofication) {
             createNewGeofication(

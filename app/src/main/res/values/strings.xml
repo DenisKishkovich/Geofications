@@ -9,4 +9,5 @@
     <string name="delete">Delete</string>
     <string name="create_notification">Create notification</string>
     <string name="delete_all_notifications">Delete all</string>
+    <string name="notif_empty">Notification cannot be empty</string>
 </resources>
