@@ -10,71 +10,67 @@
             type="com.example.geofications.ui.details.GeoficationDetailsViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.details.GeoficationDetailsFragment">
+        android:layout_height="match_parent">
 
-        <CheckBox
-            android:id="@+id/checkBoxInDetails"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/completed_text"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="8dp"
-            android:checked="@={viewModel.isCompleted}"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/editText_container"
+            android:paddingTop="8dp">
 
-        <ScrollView
-            android:id="@+id/scrollView2"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/checkBoxInDetails"
-            app:layout_constraintVertical_bias="0.0"
-            tools:layout_editor_absoluteX="-26dp">
-
-            <LinearLayout
+            <CheckBox
+                android:id="@+id/checkBoxInDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingStart="16dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="16dp">
+                android:layout_marginEnd="16dp"
+                android:checked="@={viewModel.isCompleted}"
+                android:layout_marginStart="16dp"
+                android:text="@string/completed_text"
+                android:textSize="20sp" />
 
-                <EditText
-                    android:id="@+id/title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:hint="@string/notification_text"
-                    android:inputType="textMultiLine|textCapSentences"
-                    android:maxLength="30"
-                    android:maxLines="3"
-                    android:scrollHorizontally="false"
-                    android:text="@={viewModel.title}"
-                    android:textSize="30sp"
-                    tools:text="Title"
-                    android:importantForAutofill="no" />
+            <EditText
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:hint="@string/notification_text"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLength="30"
+                android:maxLines="3"
+                android:scrollHorizontally="false"
+                android:text="@={viewModel.title}"
+                android:textSize="30sp"
+                tools:text="Title"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"/>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:layout_marginTop="16dp">
 
                 <EditText
                     android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
                     android:background="@android:color/transparent"
                     android:hint="@string/description"
+                    android:importantForAutofill="no"
                     android:inputType="textMultiLine|textCapSentences"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:gravity="top"
                     android:text="@={viewModel.description}"
                     android:textSize="20sp"
-                    tools:text="Description"
-                    android:importantForAutofill="no" />
-            </LinearLayout>
-        </ScrollView>
+                    tools:text="Description"/>
+
+            </ScrollView>
+        </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/floatingActionButton"
@@ -82,11 +78,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="?android:attr/textCheckMark"
+            android:contentDescription="@string/fab_description_add_geofication"
             android:onClick="@{() -> viewModel.saveGeofication()}"
-            android:contentDescription="@string/fab_description_add_geofication" />
+            app:layout_anchor="@id/editText_container"
+            app:layout_anchorGravity="bottom|end"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

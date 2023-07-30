@@ -1,6 +1,7 @@
 package com.example.geofications.ui.details
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -55,10 +56,6 @@ class GeoficationDetailsFragment() : Fragment() {
         binding.viewModel = geoficationDetailsViewModel
         binding.lifecycleOwner = this
 
-        // Create the menu
-//        if (argGeoficationID != -1L) {
-//            createMenu()
-//        }
         createMenu()
 
         //Hide checkbox if new geofication
@@ -77,6 +74,11 @@ class GeoficationDetailsFragment() : Fragment() {
         // Add an Observer on the state variable for snackbars.
         geoficationDetailsViewModel.snackbarText.observe(viewLifecycleOwner, Observer {
             view?.let { gottenView -> Snackbar.make(gottenView, getText(it), Snackbar.LENGTH_SHORT).show() }
+        })
+
+        // Add an Observer on the state variable for toasts.
+        geoficationDetailsViewModel.toastText.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         })
 
         return binding.root

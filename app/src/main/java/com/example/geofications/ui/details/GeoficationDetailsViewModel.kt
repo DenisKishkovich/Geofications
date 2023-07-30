@@ -49,6 +49,17 @@ class GeoficationDetailsViewModel(
     val snackbarText: LiveData<Int>
         get() = _snackbarText
 
+    /**
+     * "Inner" variable which triggers the toast
+     */
+    private val _toastText = MutableLiveData<Int>()
+
+    /**
+     * When changes immediately triggers the toast
+     */
+    val toastText: LiveData<Int>
+        get() = _toastText
+
     init {
         if (geoficationID == -1L) {
             isNewGeofication = true
@@ -98,7 +109,7 @@ class GeoficationDetailsViewModel(
 
         // Null check
         if (currentTitle == null || currentDescription == null || currentIsCompleted == null) {
-            _snackbarText.value = R.string.empty_notif_deleted
+            _toastText.value = R.string.empty_notif_deleted
             if (!isNewGeofication) {
                 deleteGeofication()
             } else {
@@ -107,7 +118,7 @@ class GeoficationDetailsViewModel(
             return
         }
         if (Geofication(title = currentTitle, description = currentDescription).isEmpty) {
-            _snackbarText.value = R.string.empty_notif_deleted
+            _toastText.value = R.string.empty_notif_deleted
             if (!isNewGeofication) {
                 deleteGeofication()
             } else {
