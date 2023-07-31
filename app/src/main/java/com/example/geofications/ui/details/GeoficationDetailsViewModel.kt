@@ -1,13 +1,20 @@
 package com.example.geofications.ui.details
 
+import android.app.AlarmManager
 import android.app.Application
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.CountDownTimer
+import android.os.SystemClock
+import androidx.core.app.AlarmManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.geofications.AlarmReceiver
 import com.example.geofications.R
 import com.example.geofications.data.Geofication
 import com.example.geofications.data.GeoficationDao
@@ -21,6 +28,15 @@ class GeoficationDetailsViewModel(
     private val geoficationID: Long,
     private val app: Application
 ) : AndroidViewModel(app) {
+
+    private val REQUEST_CODE = 0
+    private val TRIGGER_TIME = "TRIGGER_AT"
+
+    private val notifyPendingIntentAlarm: PendingIntent
+    private val alarmManager = app.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    private val sharedPrefs =
+        app.getSharedPreferences("com.example.geofications", Context.MODE_PRIVATE)
+    private lateinit var timer: CountDownTimer
 
     private var isNewGeofication: Boolean = false
 
@@ -66,6 +82,16 @@ class GeoficationDetailsViewModel(
     val toastText: LiveData<Int>
         get() = _toastText
 
+    private val _alarmOn = MutableLiveData<Boolean>()
+    val isAlarmOn: LiveData<Boolean>
+        get() = _alarmOn
+
+    private val _elapsedTime = MutableLiveData<Long>()
+    val elapsedTime: LiveData<Long>
+        get() = _elapsedTime
+
+    private val notifyAlarmIntent = Intent(app, AlarmReceiver::class.java)
+
     init {
         if (geoficationID == -1L) {
             isNewGeofication = true
@@ -77,6 +103,24 @@ class GeoficationDetailsViewModel(
             title.value = ""
             description.value = ""
             isCompleted.value = false
+        }
+
+        _alarmOn.value = PendingIntent.getBroadcast(
+            getApplication(),
+            REQUEST_CODE,
+            notifyAlarmIntent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        ) != null
+
+        notifyPendingIntentAlarm = PendingIntent.getBroadcast(
+            getApplication(),
+            REQUEST_CODE,
+            notifyAlarmIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        if (_alarmOn.value!!){
+            createTimer()
         }
     }
 
@@ -225,11 +269,73 @@ class GeoficationDetailsViewModel(
             throw RuntimeException("deleteGeofication() was called for a new geofication")
     }
 
-    fun triggerNotification() {
-        val notificationManager = ContextCompat.getSystemService(
-            app,
-            NotificationManager::class.java
-        ) as NotificationManager
-        notificationManager.sendNotification("Test notification body", app)
+    /**
+     * Creates a new alarm, notification and timer
+     */
+    fun startTimer() {
+        _alarmOn.value?.let {
+            if (!it) {
+                _alarmOn.value = true
+
+                val triggerTime = SystemClock.elapsedRealtime() + 10_000L
+
+                val notificationManager = ContextCompat.getSystemService(
+                    app,
+                    NotificationManager::class.java
+                ) as NotificationManager
+                notificationManager.sendNotification("Test notification body", app)
+
+                AlarmManagerCompat.setExactAndAllowWhileIdle(
+                    alarmManager,
+                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    triggerTime,
+                    notifyPendingIntentAlarm
+                )
+                viewModelScope.launch { saveTime(triggerTime) }
+            }
+        }
+        createTimer()
+    }
+
+    /**
+     * Creates a new timer
+     */
+    private fun createTimer() {
+        viewModelScope.launch {
+            val triggerTime = loadTime()
+            timer = object : CountDownTimer(triggerTime, 1_000L) {
+                override fun onTick(millisUntilFinished: Long) {
+                    _elapsedTime.value = triggerTime - SystemClock.elapsedRealtime()
+                    if (_elapsedTime.value!! <= 0) {
+                        resetTimer()
+                    }
+                }
+                override fun onFinish() {
+                    resetTimer()
+                }
+            }
+            timer.start()
+        }
+    }
+
+    private suspend fun saveTime(triggerTime: Long) {
+        withContext(Dispatchers.IO) {
+            sharedPrefs.edit().putLong(TRIGGER_TIME, triggerTime).apply()
+        }
+    }
+
+    private suspend fun loadTime(): Long {
+        return withContext(Dispatchers.IO) {
+            sharedPrefs.getLong(TRIGGER_TIME, 0)
+        }
+    }
+
+    /**
+     * Resets the timer on screen and sets alarm value false
+     */
+    private fun resetTimer() {
+        timer.cancel()
+        _elapsedTime.value = 0
+        _alarmOn.value = false
     }
 }
