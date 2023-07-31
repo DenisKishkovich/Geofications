@@ -10,4 +10,7 @@
     <string name="create_notification">Create notification</string>
     <string name="delete_all_notifications">Delete all</string>
     <string name="notif_empty">Notification cannot be empty</string>
+
+    <string name="on_time_notification_channel_id">on_time_channel</string>
+    <string name="on_time_notification_channel_name">On Time</string>
 </resources>

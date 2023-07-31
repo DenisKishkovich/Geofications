@@ -1,5 +1,9 @@
 package com.example.geofications.ui.details
 
+import android.app.Application
+import android.app.NotificationManager
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,14 +11,16 @@ import androidx.lifecycle.viewModelScope
 import com.example.geofications.R
 import com.example.geofications.data.Geofication
 import com.example.geofications.data.GeoficationDao
+import com.example.geofications.sendNotification
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class GeoficationDetailsViewModel(
     private val database: GeoficationDao,
-    private val geoficationID: Long
-) : ViewModel() {
+    private val geoficationID: Long,
+    private val app: Application
+) : AndroidViewModel(app) {
 
     private var isNewGeofication: Boolean = false
 
@@ -126,7 +132,7 @@ class GeoficationDetailsViewModel(
             }
             return
         }
-        if (currentTitle.isEmpty()){
+        if (currentTitle.isEmpty()) {
             _snackbarText.value = R.string.notif_empty
             return
         }
@@ -140,7 +146,14 @@ class GeoficationDetailsViewModel(
             )
         } else {
             val currentId = geoficationID
-            updateCurrentGeofication(Geofication(currentId, currentTitle, currentDescription, currentIsCompleted))
+            updateCurrentGeofication(
+                Geofication(
+                    currentId,
+                    currentTitle,
+                    currentDescription,
+                    currentIsCompleted
+                )
+            )
         }
         _navigateToMain.value = true
     }
@@ -210,5 +223,13 @@ class GeoficationDetailsViewModel(
             _navigateToMain.value = true
         } else
             throw RuntimeException("deleteGeofication() was called for a new geofication")
+    }
+
+    fun triggerNotification() {
+        val notificationManager = ContextCompat.getSystemService(
+            app,
+            NotificationManager::class.java
+        ) as NotificationManager
+        notificationManager.sendNotification("Test notification body", app)
     }
 }

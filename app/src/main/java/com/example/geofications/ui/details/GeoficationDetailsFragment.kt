@@ -1,5 +1,8 @@
 package com.example.geofications.ui.details
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -49,7 +52,8 @@ class GeoficationDetailsFragment() : Fragment() {
         // Geofication ID from args
         argGeoficationID = args.geoficationID
 
-        val viewModelFactory = GeoficationDetailsViewModelFactory(dataSource, argGeoficationID)
+        val viewModelFactory =
+            GeoficationDetailsViewModelFactory(dataSource, argGeoficationID, application)
         geoficationDetailsViewModel =
             ViewModelProvider(this, viewModelFactory).get(GeoficationDetailsViewModel::class.java)
 
@@ -73,13 +77,20 @@ class GeoficationDetailsFragment() : Fragment() {
 
         // Add an Observer on the state variable for snackbars.
         geoficationDetailsViewModel.snackbarText.observe(viewLifecycleOwner, Observer {
-            view?.let { gottenView -> Snackbar.make(gottenView, getText(it), Snackbar.LENGTH_SHORT).show() }
+            view?.let { gottenView ->
+                Snackbar.make(gottenView, getText(it), Snackbar.LENGTH_SHORT).show()
+            }
         })
 
         // Add an Observer on the state variable for toasts.
         geoficationDetailsViewModel.toastText.observe(viewLifecycleOwner, Observer {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         })
+
+        createChannel(
+            getString(R.string.on_time_notification_channel_id),
+            getString(R.string.on_time_notification_channel_name)
+        )
 
         return binding.root
     }
@@ -127,18 +138,37 @@ class GeoficationDetailsFragment() : Fragment() {
                         }
 
                         geoficationDetailsViewModel.deleteGeofication()
-                        Toast.makeText(context, R.string.notification_deleted, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, R.string.notification_deleted, Toast.LENGTH_SHORT)
+                            .show()
                         true
                     }
 
                     R.id.create_notification_menu_item -> {
-                        //TODO
-                        false
+                        geoficationDetailsViewModel.triggerNotification()
+                        Log.i("TEST LOG", "NOTIFY BUTTON") //TODO remove later
+                        true
                     }
 
                     else -> false
                 }
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
+    private fun createChannel(channelId: String, channelName: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            notificationChannel.enableVibration(true)
+            notificationChannel.description =
+                "Notification on selected time"  //TODO correct description
+
+            val notificationManager =
+                requireActivity().getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
     }
 }
