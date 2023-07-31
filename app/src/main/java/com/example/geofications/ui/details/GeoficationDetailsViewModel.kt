@@ -279,11 +279,11 @@ class GeoficationDetailsViewModel(
 
                 val triggerTime = SystemClock.elapsedRealtime() + 10_000L
 
-                val notificationManager = ContextCompat.getSystemService(
-                    app,
-                    NotificationManager::class.java
-                ) as NotificationManager
-                notificationManager.sendNotification("Test notification body", app)
+//                val notificationManager = ContextCompat.getSystemService(
+//                    app,
+//                    NotificationManager::class.java
+//                ) as NotificationManager
+//                notificationManager.sendNotification("Test notification body", app)
 
                 AlarmManagerCompat.setExactAndAllowWhileIdle(
                     alarmManager,

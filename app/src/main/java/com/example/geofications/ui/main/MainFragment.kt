@@ -1,5 +1,8 @@
 package com.example.geofications.ui.main
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -67,6 +70,11 @@ class MainFragment : Fragment() {
             }
         })
 
+        createChannel(
+            getString(R.string.on_time_notification_channel_id),
+            getString(R.string.on_time_notification_channel_name)
+        )
+
         return binding.root
     }
 
@@ -100,5 +108,22 @@ class MainFragment : Fragment() {
                 }
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
+    private fun createChannel(channelId: String, channelName: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            notificationChannel.enableVibration(true)
+            notificationChannel.description =
+                "Notification on selected time"  //TODO correct description
+
+            val notificationManager =
+                requireActivity().getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
     }
 }

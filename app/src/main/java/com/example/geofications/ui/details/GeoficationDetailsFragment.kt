@@ -87,11 +87,6 @@ class GeoficationDetailsFragment() : Fragment() {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         })
 
-        createChannel(
-            getString(R.string.on_time_notification_channel_id),
-            getString(R.string.on_time_notification_channel_name)
-        )
-
         return binding.root
     }
 
