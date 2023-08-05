@@ -30,13 +30,9 @@ class GeoficationDetailsViewModel(
 ) : AndroidViewModel(app) {
 
     private val REQUEST_CODE = 0
-    private val TRIGGER_TIME = "TRIGGER_AT"
 
     private val notifyPendingIntentAlarm: PendingIntent
     private val alarmManager = app.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    private val sharedPrefs =
-        app.getSharedPreferences("com.example.geofications", Context.MODE_PRIVATE)
-    private lateinit var timer: CountDownTimer
 
     private var isNewGeofication: Boolean = false
 
@@ -85,10 +81,6 @@ class GeoficationDetailsViewModel(
     private val _alarmOn = MutableLiveData<Boolean>()
     val isAlarmOn: LiveData<Boolean>
         get() = _alarmOn
-
-    private val _elapsedTime = MutableLiveData<Long>()
-    val elapsedTime: LiveData<Long>
-        get() = _elapsedTime
 
     private val notifyAlarmIntent = Intent(app, AlarmReceiver::class.java)
 
