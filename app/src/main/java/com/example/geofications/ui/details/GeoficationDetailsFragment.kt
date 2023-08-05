@@ -139,8 +139,7 @@ class GeoficationDetailsFragment() : Fragment() {
                     }
 
                     R.id.create_notification_menu_item -> {
-                        geoficationDetailsViewModel.startTimer()
-                        Log.i("TEST LOG", "NOTIFY BUTTON") //TODO remove later
+                        geoficationDetailsViewModel.startNotificationCountdown()
                         true
                     }
 
