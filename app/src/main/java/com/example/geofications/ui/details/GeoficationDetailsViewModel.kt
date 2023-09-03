@@ -6,8 +6,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.CountDownTimer
-import android.os.SystemClock
 import androidx.core.app.AlarmManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
@@ -22,6 +20,7 @@ import com.example.geofications.data.GeoficationDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Calendar
 
 class GeoficationDetailsViewModel(
     private val database: GeoficationDao,
@@ -78,13 +77,19 @@ class GeoficationDetailsViewModel(
     val toastText: LiveData<Int>
         get() = _toastText
 
-    private val _alarmOn = MutableLiveData<Boolean>()
-    val isAlarmOn: LiveData<Boolean>
-        get() = _alarmOn
+    private val _dateTimeAlarmOn = MutableLiveData<Boolean>()
+    val isDateTimeAlarmOn: LiveData<Boolean>
+        get() = _dateTimeAlarmOn
 
     private val notifyAlarmIntent = Intent(app, AlarmReceiver::class.java)
 
+
+    //time selection dialog
+    val hour = MutableLiveData<Int?>()
+    val minute = MutableLiveData<Int?>()
+
     init {
+
         if (geoficationID == -1L) {
             isNewGeofication = true
         }
@@ -97,7 +102,7 @@ class GeoficationDetailsViewModel(
             isCompleted.value = false
         }
 
-        _alarmOn.value = PendingIntent.getBroadcast(
+        _dateTimeAlarmOn.value = PendingIntent.getBroadcast(
             getApplication(),
             REQUEST_CODE,
             notifyAlarmIntent,
@@ -258,30 +263,40 @@ class GeoficationDetailsViewModel(
     }
 
     /**
-     * Creates a new alarm, notification and timer
+     * Creates a new alarm and notification
      */
     fun startNotificationCountdown() {
-        _alarmOn.value = false
-        _alarmOn.value?.let {
+        _dateTimeAlarmOn.value = false
+        _dateTimeAlarmOn.value?.let {
             if (!it) {
-                _alarmOn.value = true
+                _dateTimeAlarmOn.value = true
 
-                val triggerTime = SystemClock.elapsedRealtime() + 10_000L
+                //val triggerTime = SystemClock.elapsedRealtime() + 10_000L
+                val calendar = Calendar.getInstance().apply {
+                    timeInMillis = System.currentTimeMillis()
+                    set(Calendar.YEAR, 2023)
+                    set(Calendar.MONTH, Calendar.AUGUST)
+                    set(Calendar.DAY_OF_MONTH, 9)
+                    set(Calendar.HOUR_OF_DAY, 12)
+                    set(Calendar.MINUTE, 10)
+                }
 
                 val notificationManager = ContextCompat.getSystemService(
                     app,
                     NotificationManager::class.java
                 ) as NotificationManager
+
                 notificationManager.cancelNotifications()
+                alarmManager.cancel(notifyPendingIntentAlarm)
 
                 AlarmManagerCompat.setExactAndAllowWhileIdle(
                     alarmManager,
-                    AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    triggerTime,
+                    AlarmManager.RTC,
+                    calendar.timeInMillis,
                     notifyPendingIntentAlarm
                 )
             }
         }
-        _alarmOn.value = false
+        _dateTimeAlarmOn.value = false  // TODO check this line
     }
 }

@@ -2,9 +2,9 @@ package com.example.geofications.ui.details
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.TimePickerDialog
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -25,6 +25,7 @@ import com.example.geofications.R
 import com.example.geofications.data.GeoficationDatabase
 import com.example.geofications.databinding.FragmentGeoficationDetailsBinding
 import com.google.android.material.snackbar.Snackbar
+import java.util.Locale
 
 class GeoficationDetailsFragment() : Fragment() {
 
@@ -139,7 +140,8 @@ class GeoficationDetailsFragment() : Fragment() {
                     }
 
                     R.id.create_notification_menu_item -> {
-                        geoficationDetailsViewModel.startNotificationCountdown()
+                        //geoficationDetailsViewModel.startNotificationCountdown()
+                        showTimeSelectionDialog()
                         true
                     }
 
@@ -149,20 +151,11 @@ class GeoficationDetailsFragment() : Fragment() {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
-    private fun createChannel(channelId: String, channelName: String) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(
-                channelId,
-                channelName,
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            notificationChannel.enableVibration(true)
-            notificationChannel.description =
-                "Notification on selected time"  //TODO correct description
-
-            val notificationManager =
-                requireActivity().getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(notificationChannel)
-        }
+    /**
+     * Show dialog of time & date selection
+     */
+    private fun showTimeSelectionDialog() {
+        val dialogFragment = TimeSelectionDialogFragment()
+        dialogFragment.show(childFragmentManager, "game")
     }
 }
