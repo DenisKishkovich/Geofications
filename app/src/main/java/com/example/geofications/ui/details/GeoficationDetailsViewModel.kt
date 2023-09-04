@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.AlarmManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
@@ -20,6 +21,7 @@ import com.example.geofications.data.GeoficationDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.DateFormat
 import java.util.Calendar
 
 class GeoficationDetailsViewModel(
@@ -84,9 +86,14 @@ class GeoficationDetailsViewModel(
     private val notifyAlarmIntent = Intent(app, AlarmReceiver::class.java)
 
 
+
+
     //time selection dialog
     val hour = MutableLiveData<Int?>()
     val minute = MutableLiveData<Int?>()
+
+    //calendar selection
+    val dateInMillis = MutableLiveData<Long?>()
 
     init {
 
@@ -273,13 +280,15 @@ class GeoficationDetailsViewModel(
 
                 //val triggerTime = SystemClock.elapsedRealtime() + 10_000L
                 val calendar = Calendar.getInstance().apply {
-                    timeInMillis = System.currentTimeMillis()
-                    set(Calendar.YEAR, 2023)
-                    set(Calendar.MONTH, Calendar.AUGUST)
-                    set(Calendar.DAY_OF_MONTH, 9)
-                    set(Calendar.HOUR_OF_DAY, 12)
-                    set(Calendar.MINUTE, 10)
+                    timeInMillis = dateInMillis.value!!
+                    set(Calendar.HOUR_OF_DAY, hour.value!!)
+                    set(Calendar.MINUTE, minute.value!!)
+                    set(Calendar.SECOND, 0)
                 }
+
+                //TODO delete this
+//                val dateFormatter = DateFormat.getDateTimeInstance()
+//                Log.i("CALENDAR", dateFormatter.format(calendar.time))
 
                 val notificationManager = ContextCompat.getSystemService(
                     app,
