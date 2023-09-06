@@ -3,6 +3,7 @@ package com.example.geofications.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.sql.Timestamp
 
 @Entity(tableName = "geofications_table")
 data class Geofication(
@@ -16,7 +17,13 @@ data class Geofication(
     var description: String = "",
 
     @ColumnInfo
-    var isCompleted: Boolean = false
+    var isCompleted: Boolean = false,
+
+    @ColumnInfo
+    var createdTimestamp: Long = System.currentTimeMillis(),
+
+    @ColumnInfo
+    var editedTimestamp: Long = System.currentTimeMillis()
 ) {
     val isEmpty
         get() = title.isEmpty() && description.isEmpty()

@@ -53,7 +53,6 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
         viewModelScope.launch {
             updateIsCompletedinDb(geofication, completed)
         }
-        Log.i("TESST", "METHOD")
     }
 
     /**

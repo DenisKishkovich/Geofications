@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.AlarmManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
@@ -21,7 +20,6 @@ import com.example.geofications.data.GeoficationDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.DateFormat
 import java.util.Calendar
 
 class GeoficationDetailsViewModel(
@@ -30,12 +28,15 @@ class GeoficationDetailsViewModel(
     private val app: Application
 ) : AndroidViewModel(app) {
 
-    private val REQUEST_CODE = 0
+    // REQUEST CODE for multiple pending intents from multiple geofications
+    private val requestCodeNotifyOnTime = geoficationID.toInt()
 
     private val notifyPendingIntentAlarm: PendingIntent
     private val alarmManager = app.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    private var isNewGeofication: Boolean = false
+    var isNewGeofication: Boolean = false
+
+    var currentCreatedTimestamp: Long = 0L
 
     // Two-way databinding, exposing MutableLiveData
     val title = MutableLiveData<String?>()
@@ -44,6 +45,10 @@ class GeoficationDetailsViewModel(
     val description = MutableLiveData<String>()
 
     val isCompleted = MutableLiveData<Boolean>()
+
+    private val _editedTimestamp = MutableLiveData<Long>()
+    val editedTimestamp: LiveData<Long>
+        get() = _editedTimestamp
 
     /**
      * Variable that tells to navigate to a MainFragment.
@@ -111,14 +116,14 @@ class GeoficationDetailsViewModel(
 
         _dateTimeAlarmOn.value = PendingIntent.getBroadcast(
             getApplication(),
-            REQUEST_CODE,
+            requestCodeNotifyOnTime,
             notifyAlarmIntent,
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         ) != null
 
         notifyPendingIntentAlarm = PendingIntent.getBroadcast(
             getApplication(),
-            REQUEST_CODE,
+            requestCodeNotifyOnTime,
             notifyAlarmIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -143,6 +148,8 @@ class GeoficationDetailsViewModel(
                 title.value = geofication.title
                 description.value = geofication.description
                 isCompleted.value = geofication.isCompleted
+                currentCreatedTimestamp = geofication.createdTimestamp
+                _editedTimestamp.value = geofication.editedTimestamp
             } else {
                 throw Exception("Geofication not found")
             }
@@ -195,7 +202,9 @@ class GeoficationDetailsViewModel(
                     currentId,
                     currentTitle,
                     currentDescription,
-                    currentIsCompleted
+                    currentIsCompleted,
+                    currentCreatedTimestamp,
+                    System.currentTimeMillis()
                 )
             )
         }
@@ -278,7 +287,6 @@ class GeoficationDetailsViewModel(
             if (!it) {
                 _dateTimeAlarmOn.value = true
 
-                //val triggerTime = SystemClock.elapsedRealtime() + 10_000L
                 val calendar = Calendar.getInstance().apply {
                     timeInMillis = dateInMillis.value!!
                     set(Calendar.HOUR_OF_DAY, hour.value!!)
