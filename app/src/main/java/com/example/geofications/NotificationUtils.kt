@@ -4,10 +4,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.core.app.NotificationCompat
-
-private val NOTIFICATION_ID = 0
 
 // Extension function to send messages
 /**
@@ -15,13 +12,13 @@ private val NOTIFICATION_ID = 0
  *
  * @param context, activity context.
  */
-fun NotificationManager.sendNotification(messageBody: String, applicationContext: Context) {
+fun NotificationManager.sendNotification(notificationId: Int, messageBody: String, applicationContext: Context) {
 
     val contentIntent = Intent(applicationContext, MainActivity::class.java)
 
     val contentPendingIntent = PendingIntent.getActivity(
         applicationContext,
-        NOTIFICATION_ID,
+        notificationId,
         contentIntent,
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
@@ -37,9 +34,9 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         .setAutoCancel(true)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
 
-    notify(NOTIFICATION_ID, builder.build())
+    notify(notificationId, builder.build())
 }
 
-fun NotificationManager.cancelNotifications() {
-    cancelAll()
+fun NotificationManager.cancelNotification(notificationId: Int) {
+    cancel(notificationId)
 }

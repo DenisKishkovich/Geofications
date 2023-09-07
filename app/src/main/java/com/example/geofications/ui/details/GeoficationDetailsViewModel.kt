@@ -14,7 +14,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.geofications.AlarmReceiver
 import com.example.geofications.R
-import com.example.geofications.cancelNotifications
+import com.example.geofications.cancelNotification
 import com.example.geofications.data.Geofication
 import com.example.geofications.data.GeoficationDao
 import kotlinx.coroutines.Dispatchers
@@ -101,6 +101,8 @@ class GeoficationDetailsViewModel(
     val dateInMillis = MutableLiveData<Long?>()
 
     init {
+
+        notifyAlarmIntent.putExtra("id", geoficationID.toInt())
 
         if (geoficationID == -1L) {
             isNewGeofication = true
@@ -303,7 +305,7 @@ class GeoficationDetailsViewModel(
                     NotificationManager::class.java
                 ) as NotificationManager
 
-                notificationManager.cancelNotifications()
+                notificationManager.cancelNotification(geoficationID.toInt())
                 alarmManager.cancel(notifyPendingIntentAlarm)
 
                 AlarmManagerCompat.setExactAndAllowWhileIdle(
