@@ -316,6 +316,5 @@ class GeoficationDetailsViewModel(
                 )
             }
         }
-        _dateTimeAlarmOn.value = false  // TODO check this line
     }
 }
