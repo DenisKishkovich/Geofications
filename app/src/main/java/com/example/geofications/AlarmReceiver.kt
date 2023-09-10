@@ -1,6 +1,7 @@
 package com.example.geofications
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -13,12 +14,16 @@ class AlarmReceiver : BroadcastReceiver() {
 
         val notificationId = intent.extras?.getInt("id") ?: 0
 
+        val notificationTitle = intent.extras?.getString("title") ?: ""
+
         val notificationManager = ContextCompat.getSystemService(
             context,
             NotificationManager::class.java
         ) as NotificationManager
 
         notificationManager.sendNotification(notificationId,"Test notification body", context)
-        Log.i("MY TAG", "onRECEIVE")
+        Log.i("My Tag", "id $notificationId, title $notificationTitle")
+
+
     }
 }

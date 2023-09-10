@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.TimePickerDialog
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -87,6 +88,10 @@ class GeoficationDetailsFragment() : Fragment() {
         // Add an Observer on the state variable for toasts.
         geoficationDetailsViewModel.toastText.observe(viewLifecycleOwner, Observer {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        })
+
+        geoficationDetailsViewModel.isDateTimeAlarmOn.observe(viewLifecycleOwner, Observer {
+            Log.i("isDateTimeAlarmOn", it.toString())
         })
 
         return binding.root
