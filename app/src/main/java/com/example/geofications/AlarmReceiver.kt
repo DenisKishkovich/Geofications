@@ -13,17 +13,15 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
 
         val notificationId = intent.extras?.getInt("id") ?: 0
-
         val notificationTitle = intent.extras?.getString("title") ?: ""
+        val notificationDescription = intent.extras?.getString("description") ?: ""
 
         val notificationManager = ContextCompat.getSystemService(
             context,
             NotificationManager::class.java
         ) as NotificationManager
 
-        notificationManager.sendNotification(notificationId,"Test notification body", context)
-        Log.i("My Tag", "id $notificationId, title $notificationTitle")
-
+        notificationManager.sendNotification(notificationId,notificationTitle, notificationDescription, context)
 
     }
 }

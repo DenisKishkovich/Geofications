@@ -12,7 +12,7 @@ import androidx.core.app.NotificationCompat
  *
  * @param context, activity context.
  */
-fun NotificationManager.sendNotification(notificationId: Int, messageBody: String, applicationContext: Context) {
+fun NotificationManager.sendNotification(notificationId: Int = 0, messageTitle: String = "Notification", messageBody: String = "", applicationContext: Context) {
 
     val contentIntent = Intent(applicationContext, MainActivity::class.java)
 
@@ -28,11 +28,14 @@ fun NotificationManager.sendNotification(notificationId: Int, messageBody: Strin
         applicationContext.getString(R.string.on_time_notification_channel_id)
     )
         .setSmallIcon(R.drawable.ic_launcher_foreground)
-        .setContentTitle("Test title") //TODO set geof. title
-        .setContentText(messageBody)
+        .setContentTitle(messageTitle) //TODO set geof. title
         .setContentIntent(contentPendingIntent)
         .setAutoCancel(true)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+    if (messageBody.isNotEmpty()) {
+        builder.setContentText(messageBody)
+    }
 
     notify(notificationId, builder.build())
 }
