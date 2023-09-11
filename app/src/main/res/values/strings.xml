@@ -13,4 +13,6 @@
 
     <string name="on_time_notification_channel_id">on_time_channel</string>
     <string name="on_time_notification_channel_name">On Time</string>
+    <string name="add_notification">Add notification</string>
+    <string name="edit_notification">Edit notification</string>
 </resources>

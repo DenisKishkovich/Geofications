@@ -4,7 +4,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import androidx.core.app.NotificationCompat
+import androidx.navigation.NavDeepLinkBuilder
 
 // Extension function to send messages
 /**
@@ -16,19 +18,32 @@ fun NotificationManager.sendNotification(notificationId: Int = 0, messageTitle: 
 
     val contentIntent = Intent(applicationContext, MainActivity::class.java)
 
-    val contentPendingIntent = PendingIntent.getActivity(
-        applicationContext,
-        notificationId,
-        contentIntent,
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-    )
+//    val contentPendingIntent = PendingIntent.getActivity(
+//        applicationContext,
+//        notificationId,
+//        contentIntent,
+//        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+//    )
+
+    val appbarTitleArg = applicationContext.getString(R.string.edit_notification)
+
+    val argsBundle = Bundle()
+    argsBundle.putLong("geoficationID", notificationId.toLong())
+    argsBundle.putString("appbar_title", appbarTitleArg)
+
+    val contentPendingIntent = NavDeepLinkBuilder(applicationContext)
+        .setComponentName(MainActivity::class.java)
+        .setGraph(R.navigation.nav_graph)
+        .setDestination(R.id.geoficationDetailsFragment)
+        .setArguments(argsBundle)
+        .createPendingIntent()
 
     val builder = NotificationCompat.Builder(
         applicationContext,
         applicationContext.getString(R.string.on_time_notification_channel_id)
     )
         .setSmallIcon(R.drawable.ic_launcher_foreground)
-        .setContentTitle(messageTitle) //TODO set geof. title
+        .setContentTitle(messageTitle)
         .setContentIntent(contentPendingIntent)
         .setAutoCancel(true)
         .setPriority(NotificationCompat.PRIORITY_HIGH)

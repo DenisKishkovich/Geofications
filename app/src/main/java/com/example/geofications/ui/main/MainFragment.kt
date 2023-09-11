@@ -66,11 +66,15 @@ class MainFragment : Fragment() {
         // Add an Observer on the state variable for Navigating.
         mainViewModel.navigateToGeoficationDetails.observe(viewLifecycleOwner, Observer {
             it?.let {
-                val argAppBarTitle = if (it == -1L) "Add notification" else "Edit notification"
+                val argAppBarTitle =
+                    if (it == -1L) getString(R.string.add_notification) else getString(R.string.edit_notification)
 
                 this.findNavController().navigate(
-                        MainFragmentDirections.actionMainFragmentToGeoficationDetailsFragment(it, argAppBarTitle)
+                    MainFragmentDirections.actionMainFragmentToGeoficationDetailsFragment(
+                        it,
+                        argAppBarTitle
                     )
+                )
                 mainViewModel.onGeoficationNavigated()
             }
         })
