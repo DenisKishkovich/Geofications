@@ -50,4 +50,14 @@ interface GeoficationDao {
      */
     @Query("UPDATE geofications_table SET isCompleted = :isCompleted WHERE id = :geoficationId")
     suspend fun updateCompleted(geoficationId: Long, isCompleted: Boolean)
+
+    /**
+     * Update on date and time notification's params
+     */
+    @Query("UPDATE geofications_table SET isTimeNotificationSet = :isTimeNotificationSet, timestampToNotify = :timeInMillis WHERE id = :geoficationId")
+    suspend fun updateDateTimeNotificationStatus(
+        geoficationId: Long,
+        isTimeNotificationSet: Boolean,
+        timeInMillis: Long
+    )
 }

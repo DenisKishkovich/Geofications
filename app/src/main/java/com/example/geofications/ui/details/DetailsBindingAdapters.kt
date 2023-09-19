@@ -6,7 +6,9 @@ import java.text.DateFormat
 import java.util.Calendar
 
 @BindingAdapter("app:set_timestamp_text")
-fun setTimestamp(textView: TextView, editedTimeInMillis: Long) {
+fun setTimestamp(textView: TextView, editedTimeInMillis: Long?) {
+    editedTimeInMillis?.let {
         val dateFormatter = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
         textView.text = dateFormatter.format(editedTimeInMillis)
+    }
 }

@@ -23,7 +23,13 @@ data class Geofication(
     var createdTimestamp: Long = System.currentTimeMillis(),
 
     @ColumnInfo
-    var editedTimestamp: Long = System.currentTimeMillis()
+    var editedTimestamp: Long = System.currentTimeMillis(),
+
+    @ColumnInfo
+    var timestampToNotify: Long? = null,
+
+    @ColumnInfo
+    var isTimeNotificationSet: Boolean = false
 ) {
     val isEmpty
         get() = title.isEmpty() && description.isEmpty()

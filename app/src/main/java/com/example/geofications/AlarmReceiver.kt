@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        Log.i("MY TAG", "onReceive")
 
         val notificationId = intent.extras?.getInt("id") ?: 0
         val notificationTitle = intent.extras?.getString("title") ?: ""
@@ -22,6 +23,7 @@ class AlarmReceiver : BroadcastReceiver() {
         ) as NotificationManager
 
         notificationManager.sendNotification(notificationId,notificationTitle, notificationDescription, context)
+        Log.i("MY TAG", "send")
 
     }
 }

@@ -1,9 +1,5 @@
 package com.example.geofications.ui.details
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.TimePickerDialog
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -26,7 +22,6 @@ import com.example.geofications.R
 import com.example.geofications.data.GeoficationDatabase
 import com.example.geofications.databinding.FragmentGeoficationDetailsBinding
 import com.google.android.material.snackbar.Snackbar
-import java.util.Locale
 
 class GeoficationDetailsFragment() : Fragment() {
 
@@ -67,7 +62,7 @@ class GeoficationDetailsFragment() : Fragment() {
         //Hide checkbox if new geofication
         if (argGeoficationID == -1L) {
             binding.checkBoxInDetails.visibility = View.GONE
-            binding.timestampText.visibility = View.GONE
+            binding.editedTimestampText.visibility = View.GONE
         }
 
         // Add an Observer on the state variable for Navigating.
@@ -91,7 +86,7 @@ class GeoficationDetailsFragment() : Fragment() {
         })
 
         geoficationDetailsViewModel.isDateTimeAlarmOn.observe(viewLifecycleOwner, Observer {
-            Log.i("isDateTimeAlarmOn", it.toString())
+            Log.i("isDateTimeAlarmOn", it.toString())  //TODO
         })
 
         return binding.root

@@ -31,6 +31,7 @@ class TimeSelectionDialogFragment : DialogFragment() {
                 .setPositiveButton(
                     "Save"
                 ) { dialog, id ->
+                    sharedViewModel.setDateTimeInMillisForAlarm()
                     sharedViewModel.startNotificationCountdown()
                     dialog.cancel()
                 }
@@ -63,8 +64,8 @@ class TimeSelectionDialogFragment : DialogFragment() {
         val currentDate = calendar.timeInMillis
         calendarView.minDate = currentDate
 
-        if (sharedViewModel.dateInMillis.value == null) {
-            sharedViewModel.dateInMillis.value = calendar.timeInMillis
+        if (sharedViewModel.dateInMillisForAlarm.value == null) {
+            sharedViewModel.dateInMillisForAlarm.value = calendar.timeInMillis
         }
 
         calendarView.setOnDateChangeListener { calendarView, year, month, day ->
@@ -75,7 +76,7 @@ class TimeSelectionDialogFragment : DialogFragment() {
                 day
             )
             calendarView.date = calendarSelected.timeInMillis
-            sharedViewModel.dateInMillis.value = calendarView.date
+            sharedViewModel.dateInMillisForAlarm.value = calendarView.date
         }
 
     }
@@ -84,34 +85,34 @@ class TimeSelectionDialogFragment : DialogFragment() {
      * Initialize timePicker
      */
     private fun initTimePicker(selectButton: Button) {
-        if (sharedViewModel.hour.value != null && sharedViewModel.minute.value != null) {
+        if (sharedViewModel.hourForAlarm.value != null && sharedViewModel.minuteForAlarm.value != null) {
             selectButton.text =
                 String.format(
                     Locale.getDefault(),
                     "%02d:%02d",
-                    sharedViewModel.hour.value,
-                    sharedViewModel.minute.value
+                    sharedViewModel.hourForAlarm.value,
+                    sharedViewModel.minuteForAlarm.value
                 )
         }
 
         selectButton.setOnClickListener {
             val onTimeSetListener =
                 TimePickerDialog.OnTimeSetListener { _, selectedHour, selectedMinute ->
-                    sharedViewModel.hour.value = selectedHour
-                    sharedViewModel.minute.value = selectedMinute
+                    sharedViewModel.hourForAlarm.value = selectedHour
+                    sharedViewModel.minuteForAlarm.value = selectedMinute
                     selectButton.text =
                         String.format(
                             Locale.getDefault(),
                             "%02d:%02d",
-                            sharedViewModel.hour.value,
-                            sharedViewModel.minute.value
+                            sharedViewModel.hourForAlarm.value,
+                            sharedViewModel.minuteForAlarm.value
                         )
                 }
             val timePickerDialog = TimePickerDialog(
                 context,
                 onTimeSetListener,
-                sharedViewModel.hour.value ?: 0,
-                sharedViewModel.minute.value ?: 0,
+                sharedViewModel.hourForAlarm.value ?: 0,
+                sharedViewModel.minuteForAlarm.value ?: 0,
                 true
             )
             timePickerDialog.setTitle("Select time now")

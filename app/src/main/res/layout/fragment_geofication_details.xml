@@ -32,13 +32,33 @@
                 android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/timestamp_text"
+                android:id="@+id/edited_timestamp_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="12/08/2023 10:23"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 app:set_timestamp_text="@{viewModel.editedTimestamp}"
+                />
+
+            <TextView
+                android:id="@+id/is_time_notif_set_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="true"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="@{viewModel.isDateTimeAlarmOn().toString()}"
+                />
+
+            <TextView
+                android:id="@+id/time_notif_timestamp_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="12/08/2023 10:23"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                app:set_timestamp_text="@{viewModel.dateTimeInMillisForAlarm}"
                 />
 
             <EditText
