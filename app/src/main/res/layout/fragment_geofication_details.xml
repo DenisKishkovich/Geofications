@@ -36,7 +36,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/checkBoxInDetails"
@@ -89,10 +88,9 @@
                 app:layout_constraintTop_toBottomOf="@+id/edited_timestamp_text"
                 tools:text="Title" />
 
-            <androidx.core.widget.NestedScrollView
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -113,7 +111,7 @@
                     android:text="@={viewModel.description}"
                     android:textSize="20sp"
                     tools:text="This is description multiline text for edit text" />
-            </androidx.core.widget.NestedScrollView>
+            </ScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -125,8 +123,7 @@
             android:contentDescription="@string/fab_description_add_geofication"
             android:onClick="@{() -> viewModel.saveGeofication()}"
             android:src="?android:attr/textCheckMark"
-            app:layout_anchor="@id/editText_container"
-            app:layout_anchorGravity="bottom|end" />
+            android:layout_gravity="bottom|end" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

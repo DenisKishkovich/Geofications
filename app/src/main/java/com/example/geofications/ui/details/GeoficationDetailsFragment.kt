@@ -96,8 +96,8 @@ class GeoficationDetailsFragment() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Show keyboard if new notification
-        val titleEditText = binding.title
         if (argGeoficationID == -1L) {
+            val titleEditText = binding.title
             titleEditText.requestFocus()
 
             val imm = requireActivity().getSystemService(InputMethodManager::class.java)
