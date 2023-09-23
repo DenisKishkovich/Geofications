@@ -14,93 +14,107 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:id="@+id/editText_container"
-            android:paddingTop="8dp">
+            android:id="@+id/editText_container">
 
             <CheckBox
                 android:id="@+id/checkBoxInDetails"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:checked="@={viewModel.isCompleted}"
-                android:layout_marginStart="16dp"
                 android:text="@string/completed_text"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/edited_timestamp_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="12/08/2023 10:23"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:layout_marginStart="16dp"
+
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/checkBoxInDetails"
                 app:set_timestamp_text="@{viewModel.editedTimestamp}"
-                />
+                tools:text="12/08/2023 10:23" />
 
             <TextView
                 android:id="@+id/is_time_notif_set_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="true"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:text="@{viewModel.isDateTimeAlarmOn().toString()}"
-                />
+                app:layout_constraintBottom_toBottomOf="@+id/checkBoxInDetails"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/checkBoxInDetails"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="true" />
 
             <TextView
                 android:id="@+id/time_notif_timestamp_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="12/08/2023 10:23"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/checkBoxInDetails"
+                app:layout_constraintTop_toBottomOf="@+id/is_time_notif_set_text"
                 app:set_timestamp_text="@{viewModel.dateTimeInMillisForAlarm}"
-                />
+                tools:text="12/08/2023 10:23" />
 
             <EditText
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:background="@android:color/transparent"
                 android:hint="@string/notification_text"
                 android:importantForAutofill="no"
                 android:inputType="textMultiLine|textCapSentences"
                 android:maxLength="30"
                 android:maxLines="3"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:scrollHorizontally="false"
                 android:text="@={viewModel.title}"
                 android:textSize="30sp"
-                tools:text="Title"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edited_timestamp_text"
+                tools:text="Title" />
 
-            <ScrollView
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="true"
-                android:layout_marginTop="16dp">
+                android:layout_height="0dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title">
 
                 <EditText
                     android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
+                    android:gravity="top"
                     android:hint="@string/description"
                     android:importantForAutofill="no"
                     android:inputType="textMultiLine|textCapSentences"
                     android:paddingStart="16dp"
+                    android:paddingTop="8dp"
                     android:paddingEnd="16dp"
-                    android:gravity="top"
                     android:text="@={viewModel.description}"
                     android:textSize="20sp"
-                    tools:text="Description"/>
-
-            </ScrollView>
-        </LinearLayout>
+                    tools:text="This is description multiline text for edit text" />
+            </androidx.core.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/floatingActionButton"
