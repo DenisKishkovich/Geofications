@@ -31,8 +31,7 @@ class TimeSelectionDialogFragment : DialogFragment() {
                 .setPositiveButton(
                     "Save"
                 ) { dialog, id ->
-                    sharedViewModel.setDateTimeInMillisForAlarm()
-                    sharedViewModel.startNotificationCountdown()
+                    sharedViewModel.updateDateTimeAlarm()
                     dialog.cancel()
                 }
                 .setNegativeButton(

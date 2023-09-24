@@ -22,7 +22,7 @@ interface GeoficationDao {
      * Insert geof. in database. If it exists, replace.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertGeofication(geofication: Geofication)
+    suspend fun insertGeofication(geofication: Geofication): Long
 
     /**
      * Update a geof.
@@ -58,6 +58,6 @@ interface GeoficationDao {
     suspend fun updateDateTimeNotificationStatus(
         geoficationId: Long,
         isTimeNotificationSet: Boolean,
-        timeInMillis: Long
+        timeInMillis: Long?
     )
 }
