@@ -362,6 +362,9 @@ class GeoficationDetailsViewModel(
     fun updateDateTimeAlarm() {
         _dateTimeAlarmOn.value = true
         setDateTimeInMillisForAlarm()
+        if (dateTimeInMillisForAlarm.value!! <= System.currentTimeMillis()) {
+            _snackbarText.value = R.string.time_less_than_current
+        }
 
         if (!isNewGeofication) {
             viewModelScope.launch {

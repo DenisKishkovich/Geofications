@@ -15,4 +15,5 @@
     <string name="on_time_notification_channel_name">On Time</string>
     <string name="add_notification">Add notification</string>
     <string name="edit_notification">Edit notification</string>
+    <string name="time_less_than_current">Reminder time is less than current time!</string>
 </resources>

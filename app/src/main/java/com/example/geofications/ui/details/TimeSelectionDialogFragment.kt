@@ -21,7 +21,7 @@ class TimeSelectionDialogFragment : DialogFragment() {
     private val sharedViewModel: GeoficationDetailsViewModel by viewModels(ownerProducer = { requireParentFragment() })
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
+        val dialog = activity?.let {
             val builder = AlertDialog.Builder(it)
             val inflater = requireActivity().layoutInflater
             dialogView = inflater.inflate(R.layout.dialog_time_selection, null)
@@ -42,7 +42,17 @@ class TimeSelectionDialogFragment : DialogFragment() {
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
 
+        // Hide positive button if time is not set
+        dialog.setOnShowListener {
+            dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled = false
+            sharedViewModel.hourForAlarm.observe(viewLifecycleOwner) {
+                dialog.getButton(Dialog.BUTTON_POSITIVE).isEnabled = it != null
+            }
+        }
+
+        return dialog
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
