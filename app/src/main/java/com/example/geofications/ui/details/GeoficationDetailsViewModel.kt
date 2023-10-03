@@ -318,7 +318,7 @@ class GeoficationDetailsViewModel(
 
     private fun createPendingIntentForDateTimeAlarm(): PendingIntent {
         notifyAlarmIntent.apply {
-            putExtra("id", geoficationID.toInt())
+            putExtra("id", geoficationID)
             putExtra("title", title.value)
             putExtra("description", description.value)
         }

@@ -14,12 +14,12 @@ import androidx.navigation.NavDeepLinkBuilder
  *
  * @param context, activity context.
  */
-fun NotificationManager.sendNotification(notificationId: Int = 0, messageTitle: String = "Notification", messageBody: String = "", applicationContext: Context) {
+fun NotificationManager.sendNotification(notificationId: Long = 0L, messageTitle: String = "Notification", messageBody: String = "", applicationContext: Context) {
 
     val appbarTitleArg = applicationContext.getString(R.string.edit_notification)
 
     val argsBundle = Bundle()
-    argsBundle.putLong("geoficationID", notificationId.toLong())
+    argsBundle.putLong("geoficationID", notificationId)
     argsBundle.putString("appbar_title", appbarTitleArg)
 
     val contentPendingIntent = NavDeepLinkBuilder(applicationContext)
@@ -45,7 +45,7 @@ fun NotificationManager.sendNotification(notificationId: Int = 0, messageTitle: 
 
 
 
-    notify(notificationId, builder.build())
+    notify(notificationId.toInt(), builder.build())
 }
 
 fun NotificationManager.cancelNotification(notificationId: Int) {
