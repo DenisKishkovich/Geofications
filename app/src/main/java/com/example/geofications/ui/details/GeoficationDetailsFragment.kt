@@ -1,5 +1,6 @@
 package com.example.geofications.ui.details
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -152,6 +153,7 @@ class GeoficationDetailsFragment() : Fragment() {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
+
     /**
      * Show dialog of time & date selection
      */
@@ -159,4 +161,6 @@ class GeoficationDetailsFragment() : Fragment() {
         val dialogFragment = TimeSelectionDialogFragment()
         dialogFragment.show(childFragmentManager, "game")
     }
+
+
 }

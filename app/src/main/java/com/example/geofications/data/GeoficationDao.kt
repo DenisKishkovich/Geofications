@@ -60,4 +60,13 @@ interface GeoficationDao {
         isTimeNotificationSet: Boolean,
         timeInMillis: Long?
     )
+
+    /**
+     * Update on date and time notification's set status
+     */
+    @Query("UPDATE geofications_table SET isTimeNotificationSet = :isTimeNotificationSet WHERE id = :geoficationId")
+    suspend fun updateIsTimeNotificationSetStatus(
+        geoficationId: Long,
+        isTimeNotificationSet: Boolean
+    )
 }

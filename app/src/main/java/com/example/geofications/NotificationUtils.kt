@@ -43,6 +43,8 @@ fun NotificationManager.sendNotification(notificationId: Int = 0, messageTitle: 
         builder.setContentText(messageBody)
     }
 
+
+
     notify(notificationId, builder.build())
 }
 
