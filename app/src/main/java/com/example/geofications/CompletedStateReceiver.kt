@@ -11,37 +11,32 @@ import android.os.PersistableBundle
 import androidx.core.content.ContextCompat
 import java.util.concurrent.TimeUnit
 
-class AlarmReceiver : BroadcastReceiver() {
+class CompletedStateReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val intentAction = intent.action ?: ""
         val geoficationId = intent.extras?.getLong("id") ?: 0
-        val notificationTitle = intent.extras?.getString("title") ?: ""
-        val notificationDescription = intent.extras?.getString("description") ?: ""
 
         val notificationManager = ContextCompat.getSystemService(
             context,
             NotificationManager::class.java
         ) as NotificationManager
 
-        // Send notification
-        notificationManager.sendNotification(geoficationId,notificationTitle, notificationDescription, context)
+        // Cancel notification when it's action is clicked
+        notificationManager.cancel(geoficationId.toInt())
 
-        // Change isTimeNotificationSet status in db
-        createJob(context, geoficationId, false, intentAction)
+        // Update completed state of geofication in database
+        createJob(context, geoficationId, true, intentAction)
     }
 
-    /**
-     * Creating job to change isTimeNotificationSet status in db
-     */
-    private fun createJob(context: Context, id: Long, isNotificationSet: Boolean, intentAction: String) {
+    private fun createJob(context: Context, id: Long, isCompleted: Boolean, intentAction: String) {
         val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         val jobInfo = JobInfo.Builder(hashCode(), ComponentName(context, UpdateGeoficationJobService::class.java))
 
         // Passing extras to JobService
         val jobBundle = PersistableBundle().apply {
             putLong("id", id)
-            putBoolean("isNotificationSet", isNotificationSet)
             putString("intentAction", intentAction)
+            putBoolean("isCompleted", isCompleted)
         }
 
         // Building a job

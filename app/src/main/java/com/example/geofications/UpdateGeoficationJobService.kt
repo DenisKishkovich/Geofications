@@ -22,21 +22,43 @@ class UpdateGeoficationJobService : JobService() {
     private val supervisorJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.IO + supervisorJob)
 
+    private val INTENT_ACTION_DATE_TIME = "datetime"
+    private val INTENT_ACTION_COMPLETED = "completed"
+
     override fun onStartJob(jobParameters: JobParameters): Boolean {
         params = jobParameters
 
+        val intentAction = jobParameters.extras.getString("intentAction")
         val id = jobParameters.extras.getLong("id")
-        val isNotificationSet = jobParameters.extras.getBoolean("isNotificationSet")
 
         // DAO
         val dataSource = GeoficationDatabase.getInstance(applicationContext).geoficationDAO
 
-        // Updating the database
-        serviceScope.launch {
-            updateIsDateTimeAlarmSetInDb(dataSource, id, isNotificationSet)
+        when (intentAction) {
+            // Update isDateTimeAlarmSet
+            INTENT_ACTION_DATE_TIME -> {
+                val isNotificationSet = jobParameters.extras.getBoolean("isNotificationSet")
+                // Updating the database
+                serviceScope.launch {
+                    updateIsDateTimeAlarmSetInDb(dataSource, id, isNotificationSet)
+                }
+
+                // True because database updates in background
+                return true
+            }
+            // Update isCompleted state of geofication
+            INTENT_ACTION_COMPLETED -> {
+                val isCompleted = jobParameters.extras.getBoolean("isCompleted")
+                // Updating the database
+                serviceScope.launch {
+                    updateIsCompletedInDb(dataSource, id, isCompleted)
+                }
+
+                // True because database updates in background
+                return true
+            }
+            else -> return false
         }
-        // True because database updates in background
-        return true
     }
 
     // Returning false means we want to end this job entirely right now and onStartJob() won't be called again
@@ -50,6 +72,14 @@ class UpdateGeoficationJobService : JobService() {
     private suspend fun updateIsDateTimeAlarmSetInDb(data: GeoficationDao, id: Long, isTimeNotificationSet: Boolean) {
         withContext(Dispatchers.IO) {
             data.updateIsTimeNotificationSetStatus(id, isTimeNotificationSet)
+            // Notify the system when our work is finished, so that it can release the resources. It is used when "true" is returned from onStartJob
+            jobFinished(params, false)
+        }
+    }
+
+    private suspend fun updateIsCompletedInDb(data: GeoficationDao, id: Long, isCompleted: Boolean) {
+        withContext(Dispatchers.IO) {
+            data.updateCompleted(id, isCompleted)
             // Notify the system when our work is finished, so that it can release the resources. It is used when "true" is returned from onStartJob
             jobFinished(params, false)
         }

@@ -28,6 +28,8 @@ class GeoficationDetailsViewModel(
     private val app: Application
 ) : AndroidViewModel(app) {
 
+    private val INTENT_ACTION_DATE_TIME = "datetime"
+
     private val alarmManager = app.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     private var isNewGeofication: Boolean = false
@@ -318,6 +320,7 @@ class GeoficationDetailsViewModel(
 
     private fun createPendingIntentForDateTimeAlarm(): PendingIntent {
         notifyAlarmIntent.apply {
+            action = INTENT_ACTION_DATE_TIME
             putExtra("id", geoficationID)
             putExtra("title", title.value)
             putExtra("description", description.value)

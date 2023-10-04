@@ -1,7 +1,6 @@
 package com.example.geofications.ui.main
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -40,7 +39,7 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
     /**
      * Update completed state of geof. in db
      */
-    private suspend fun updateIsCompletedinDb(geofication: Geofication, completed: Boolean) {
+    private suspend fun updateIsCompletedInDb(geofication: Geofication, completed: Boolean) {
         withContext(Dispatchers.IO) {
             database.updateCompleted(geofication.id, completed)
         }
@@ -51,7 +50,7 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
      */
     fun completeGeofication(geofication: Geofication, completed: Boolean) {
         viewModelScope.launch {
-            updateIsCompletedinDb(geofication, completed)
+            updateIsCompletedInDb(geofication, completed)
         }
     }
 
