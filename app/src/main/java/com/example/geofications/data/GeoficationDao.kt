@@ -9,7 +9,7 @@ interface GeoficationDao {
     /**
      * Select all geofications from table
      */
-    @Query("SELECT * FROM geofications_table")
+    @Query("SELECT * FROM geofications_table ORDER BY editedTimestamp DESC")
     fun getAllGeofications(): LiveData<List<Geofication>>
 
     /**

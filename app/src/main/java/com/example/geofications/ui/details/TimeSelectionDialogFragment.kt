@@ -17,25 +17,25 @@ import java.util.Locale
 
 class TimeSelectionDialogFragment : DialogFragment() {
 
-    private lateinit var dialogView: View
+    private val dialogView: View by lazy {
+        val inflater = requireActivity().layoutInflater
+        inflater.inflate(R.layout.dialog_time_selection, null)
+    }
     private val sharedViewModel: GeoficationDetailsViewModel by viewModels(ownerProducer = { requireParentFragment() })
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = activity?.let {
             val builder = AlertDialog.Builder(it)
-            val inflater = requireActivity().layoutInflater
-            dialogView = inflater.inflate(R.layout.dialog_time_selection, null)
 
             builder.setView(dialogView)
-                .setMessage("SELECT TIME")
                 .setPositiveButton(
-                    "Save"
+                    getString(R.string.dialog_save_button)
                 ) { dialog, id ->
                     sharedViewModel.updateDateTimeAlarm()
                     dialog.cancel()
                 }
                 .setNegativeButton(
-                    "Cancel"
+                    getString(R.string.dialog_cancel_button)
                 ) { dialog, id ->
                     dialog.cancel()
                 }
@@ -53,12 +53,11 @@ class TimeSelectionDialogFragment : DialogFragment() {
         return dialog
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         return dialogView
     }
 
@@ -77,15 +76,15 @@ class TimeSelectionDialogFragment : DialogFragment() {
             sharedViewModel.dateInMillisForAlarm.value = calendar.timeInMillis
         }
 
-        calendarView.setOnDateChangeListener { calendarView, year, month, day ->
+        calendarView.setOnDateChangeListener { selectedCalendarView, year, month, day ->
             val calendarSelected = Calendar.getInstance()
             calendarSelected.set(
                 year,
                 month,
                 day
             )
-            calendarView.date = calendarSelected.timeInMillis
-            sharedViewModel.dateInMillisForAlarm.value = calendarView.date
+            selectedCalendarView.date = calendarSelected.timeInMillis
+            sharedViewModel.dateInMillisForAlarm.value = selectedCalendarView.date
         }
 
     }
@@ -124,7 +123,6 @@ class TimeSelectionDialogFragment : DialogFragment() {
                 sharedViewModel.minuteForAlarm.value ?: 0,
                 true
             )
-            timePickerDialog.setTitle("Select time now")
             timePickerDialog.show()
         }
     }

@@ -16,4 +16,7 @@
     <string name="add_notification">Add notification</string>
     <string name="edit_notification">Edit notification</string>
     <string name="time_less_than_current">Reminder time is less than current time!</string>
+    <string name="dialog_save_button">Save</string>
+    <string name="dialog_cancel_button">Cancel</string>
+    <string name="dialog_select_time_button">Select Time</string>
 </resources>

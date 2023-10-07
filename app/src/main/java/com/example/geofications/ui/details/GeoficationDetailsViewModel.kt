@@ -36,6 +36,8 @@ class GeoficationDetailsViewModel(
 
     private var currentCreatedTimestamp: Long = 0L
 
+    private val notifyAlarmIntent = Intent(app, AlarmReceiver::class.java)
+
     // Two-way data binding, exposing MutableLiveData
     val title = MutableLiveData<String?>()
 
@@ -86,14 +88,12 @@ class GeoficationDetailsViewModel(
     val isDateTimeAlarmOn: LiveData<Boolean>
         get() = _dateTimeAlarmOn
 
-    private val notifyAlarmIntent = Intent(app, AlarmReceiver::class.java)
 
-
-    //time selection dialog
+    //Data for time selection dialog
     val hourForAlarm = MutableLiveData<Int?>()
     val minuteForAlarm = MutableLiveData<Int?>()
 
-    //calendar selection
+    //Data fot calendar selection
     val dateInMillisForAlarm = MutableLiveData<Long?>()
 
     private val _dateTimeInMillisForAlarm = MutableLiveData<Long?>()
@@ -248,15 +248,6 @@ class GeoficationDetailsViewModel(
     }
 
     /**
-     * Call this immediately after navigating to MainFragment
-     * It will clear the navigation request, so if the user rotates their phone it won't navigate
-     * twice.
-     */
-    fun doneNavigating() {
-        _navigateToMain.value = false
-    }
-
-    /**
      * Delete geofication from database
      */
     private suspend fun deleteGeoficationFromDb(geoficationId: Long) {
@@ -279,6 +270,15 @@ class GeoficationDetailsViewModel(
             _navigateToMain.value = true
         } else
             throw RuntimeException("deleteGeofication() was called for a new geofication")
+    }
+
+    /**
+     * Call this immediately after navigating to MainFragment
+     * It will clear the navigation request, so if the user rotates their phone it won't navigate
+     * twice.
+     */
+    fun doneNavigating() {
+        _navigateToMain.value = false
     }
 
     /**

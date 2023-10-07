@@ -1,8 +1,6 @@
 package com.example.geofications.ui.details
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -86,10 +84,6 @@ class GeoficationDetailsFragment() : Fragment() {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         })
 
-        geoficationDetailsViewModel.isDateTimeAlarmOn.observe(viewLifecycleOwner, Observer {
-            Log.i("isDateTimeAlarmOn", it.toString())  //TODO
-        })
-
         return binding.root
     }
 
@@ -142,11 +136,9 @@ class GeoficationDetailsFragment() : Fragment() {
                     }
 
                     R.id.create_notification_menu_item -> {
-                        //geoficationDetailsViewModel.startNotificationCountdown()
                         showTimeSelectionDialog()
                         true
                     }
-
                     else -> false
                 }
             }
@@ -161,6 +153,4 @@ class GeoficationDetailsFragment() : Fragment() {
         val dialogFragment = TimeSelectionDialogFragment()
         dialogFragment.show(childFragmentManager, "game")
     }
-
-
 }

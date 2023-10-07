@@ -55,18 +55,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="true" />
 
-            <TextView
-                android:id="@+id/time_notif_timestamp_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/checkBoxInDetails"
-                app:layout_constraintTop_toBottomOf="@+id/is_time_notif_set_text"
-                app:set_timestamp_text="@{viewModel.dateTimeInMillisForAlarm}"
-                tools:text="12/08/2023 10:23" />
-
             <EditText
                 android:id="@+id/title"
                 android:layout_width="match_parent"
@@ -89,6 +77,7 @@
                 tools:text="Title" />
 
             <ScrollView
+                android:id="@+id/scrollView2"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -112,6 +101,20 @@
                     android:textSize="20sp"
                     tools:text="This is description multiline text for edit text" />
             </ScrollView>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/datetime_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:checkedIconVisible="false"
+                app:chipIcon="@android:drawable/ic_lock_idle_alarm"
+                app:closeIconVisible="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="12/08/2023 10:23"
+                app:set_timestamp_text="@{viewModel.dateTimeInMillisForAlarm}" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
