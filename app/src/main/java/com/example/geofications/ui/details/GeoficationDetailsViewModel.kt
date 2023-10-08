@@ -32,7 +32,7 @@ class GeoficationDetailsViewModel(
 
     private val alarmManager = app.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    private var isNewGeofication: Boolean = false
+    var isNewGeofication: Boolean = false
 
     private var currentCreatedTimestamp: Long = 0L
 
@@ -150,7 +150,7 @@ class GeoficationDetailsViewModel(
         val currentTitle = title.value
         val currentDescription = description.value
         val currentIsCompleted = isCompleted.value
-        val currentTimestampToNotify = dateTimeInMillisForAlarm.value
+        val currentTimestampToNotify = _dateTimeInMillisForAlarm.value
         val currentDateTimeAlarmOn = _dateTimeAlarmOn.value ?: false
 
         // Null check
@@ -208,7 +208,7 @@ class GeoficationDetailsViewModel(
     /**
      * Insert new geofication into database
      */
-    private suspend fun insertGeofication(geofication: Geofication){
+    private suspend fun insertGeofication(geofication: Geofication) {
         withContext(Dispatchers.IO) {
             geoficationID = database.insertGeofication(geofication)
             if (_dateTimeAlarmOn.value == true) {
@@ -262,7 +262,7 @@ class GeoficationDetailsViewModel(
     fun deleteGeofication() {
         if (!isNewGeofication) {
             if (_dateTimeAlarmOn.value == true) {
-                cancelDateTimeNotification(createPendingIntentForDateTimeAlarm())
+                cancelDateTimeNotificationAndAlarm(createPendingIntentForDateTimeAlarm())
             }
             viewModelScope.launch {
                 deleteGeoficationFromDb(geoficationID)
@@ -305,7 +305,7 @@ class GeoficationDetailsViewModel(
             val notifyPendingIntentAlarm = createPendingIntentForDateTimeAlarm()
 
             // delete current notification if exist
-            cancelDateTimeNotification(notifyPendingIntentAlarm)
+            cancelDateTimeNotificationAndAlarm(notifyPendingIntentAlarm)
 
             _dateTimeInMillisForAlarm.value?.let {
                 AlarmManagerCompat.setExactAndAllowWhileIdle(
@@ -333,7 +333,7 @@ class GeoficationDetailsViewModel(
         )
     }
 
-    private fun cancelDateTimeNotification(pendingIntent: PendingIntent) {
+    private fun cancelDateTimeNotificationAndAlarm(pendingIntent: PendingIntent) {
         val notificationManager = ContextCompat.getSystemService(
             app,
             NotificationManager::class.java
@@ -356,12 +356,12 @@ class GeoficationDetailsViewModel(
     }
 
     /**
-     * Update completed date and time notification status
+     * Update date and time notification status
      */
     fun updateDateTimeAlarm() {
         _dateTimeAlarmOn.value = true
         setDateTimeInMillisForAlarm()
-        if (dateTimeInMillisForAlarm.value!! <= System.currentTimeMillis()) {
+        if (_dateTimeInMillisForAlarm.value!! <= System.currentTimeMillis()) {
             _snackbarText.value = R.string.time_less_than_current
         }
 
@@ -370,10 +370,30 @@ class GeoficationDetailsViewModel(
                 updateDateTimeAlarmInDb(
                     geoficationID,
                     _dateTimeAlarmOn.value ?: false,
-                    dateTimeInMillisForAlarm.value
+                    _dateTimeInMillisForAlarm.value
                 )
             }
             startNotificationCountdown()
+        }
+    }
+
+    /**
+     * Cancel date/time alarm and notification
+     */
+    fun cancelDateTimeAlarm() {
+        _dateTimeAlarmOn.value = false
+        _dateTimeInMillisForAlarm.value = null
+
+        if (!isNewGeofication) {
+            cancelDateTimeNotificationAndAlarm(createPendingIntentForDateTimeAlarm())
+
+            viewModelScope.launch {
+                updateDateTimeAlarmInDb(
+                    geoficationID,
+                    _dateTimeAlarmOn.value ?: false,
+                    _dateTimeInMillisForAlarm.value
+                )
+            }
         }
     }
 }

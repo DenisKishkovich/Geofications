@@ -29,7 +29,8 @@
                 android:text="@string/completed_text"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:set_visibility="@{viewModel.isNewGeofication}"/>
 
             <TextView
                 android:id="@+id/edited_timestamp_text"
@@ -40,20 +41,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/checkBoxInDetails"
                 app:set_timestamp_text="@{viewModel.editedTimestamp}"
-                tools:text="12/08/2023 10:23" />
-
-            <TextView
-                android:id="@+id/is_time_notif_set_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:text="@{viewModel.isDateTimeAlarmOn().toString()}"
-                app:layout_constraintBottom_toBottomOf="@+id/checkBoxInDetails"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/checkBoxInDetails"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="true" />
+                tools:text="12/08/2023 10:23"
+                app:set_visibility="@{viewModel.isNewGeofication}"/>
 
             <EditText
                 android:id="@+id/title"
@@ -104,16 +93,19 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/datetime_chip"
+                style="@style/Widget.MaterialComponents.Chip.Entry"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                app:checkedIconVisible="false"
+                android:checkable="false"
+                app:checkedIconVisible="true"
                 app:chipIcon="@android:drawable/ic_lock_idle_alarm"
                 app:closeIconVisible="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="12/08/2023 10:23"
-                app:set_timestamp_text="@{viewModel.dateTimeInMillisForAlarm}" />
+                app:set_timestamp_text="@{viewModel.dateTimeInMillisForAlarm}"
+                app:set_visibility="@{viewModel.dateTimeInMillisForAlarm}"
+                tools:text="20/08/2023 10:23" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

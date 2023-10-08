@@ -75,6 +75,7 @@ class TimeSelectionDialogFragment : DialogFragment() {
         if (sharedViewModel.dateInMillisForAlarm.value == null) {
             sharedViewModel.dateInMillisForAlarm.value = calendar.timeInMillis
         }
+        calendarView.date = sharedViewModel.dateInMillisForAlarm.value!!
 
         calendarView.setOnDateChangeListener { selectedCalendarView, year, month, day ->
             val calendarSelected = Calendar.getInstance()
