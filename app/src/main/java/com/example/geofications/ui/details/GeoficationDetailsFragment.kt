@@ -1,5 +1,6 @@
 package com.example.geofications.ui.details
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -120,9 +121,13 @@ class GeoficationDetailsFragment() : Fragment() {
                 showExitWithoutSaveDialog(this)
             } else {
                 this.isEnabled = false
-                requireActivity().onBackPressedDispatcher.onBackPressed()
+                findNavController().navigateUp()
             }
         }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
     }
 
     /**
@@ -191,13 +196,11 @@ class GeoficationDetailsFragment() : Fragment() {
             .setPositiveButton("Exit") {dialog, which ->
                 if (onBackPressedCallback.isEnabled) {
                     onBackPressedCallback.isEnabled = false
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                    findNavController().navigateUp()
                     dialog.cancel()
                 }
                 dialog.cancel()
             }
             .show()
     }
-
-
 }

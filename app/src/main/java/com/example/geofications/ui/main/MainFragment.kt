@@ -19,6 +19,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.example.geofications.GeoficationClickListener
 import com.example.geofications.MainRecyclerAdapter
 import com.example.geofications.R
@@ -60,6 +61,19 @@ class MainFragment : Fragment() {
         mainViewModel.geoficationList.observe(viewLifecycleOwner, Observer {
             it?.let {
                 myAdapter.submitGeoficationList(it)
+            }
+        })
+
+        // Scroll to top of geofication list if new item added or item changed
+        myAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                binding.notifList.scrollToPosition(positionStart)
+            }
+
+            override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
+                super.onItemRangeChanged(positionStart, itemCount)
+                binding.notifList.scrollToPosition(positionStart)
             }
         })
 
