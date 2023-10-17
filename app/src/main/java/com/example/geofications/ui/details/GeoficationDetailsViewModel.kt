@@ -39,7 +39,7 @@ class GeoficationDetailsViewModel(
     private val notifyAlarmIntent = Intent(app, AlarmReceiver::class.java)
 
     // Two-way data binding, exposing MutableLiveData
-    val title = MutableLiveData<String?>()
+    val title = MutableLiveData<String>()
 
     // Two-way data binding, exposing MutableLiveData
     val description = MutableLiveData<String>()
@@ -61,6 +61,28 @@ class GeoficationDetailsViewModel(
      */
     val navigateToMain: LiveData<Boolean>
         get() = _navigateToMain
+
+    /**
+     * "Inner" old title of geofication (when loaded)
+     */
+    private val _oldTitle = MutableLiveData<String>()
+
+    /**
+     *" Outer" old title of geofication (when loaded)
+     */
+    val oldTitle: LiveData<String>
+        get() = _oldTitle
+
+    /**
+     * "Inner" old description of geofication (when loaded)
+     */
+    private val _oldDescription = MutableLiveData<String>()
+
+    /**
+     *" Outer" old description of geofication (when loaded)
+     */
+    val oldDescription: LiveData<String>
+        get() = _oldDescription
 
     /**
      * "Inner" variable which triggers the snackbar
@@ -130,6 +152,9 @@ class GeoficationDetailsViewModel(
             val geofication = getGeofication(geoficationID)
 
             if (geofication != null) {
+                _oldTitle.value = geofication.title
+                _oldDescription.value = geofication.description
+
                 title.value = geofication.title
                 description.value = geofication.description
                 isCompleted.value = geofication.isCompleted

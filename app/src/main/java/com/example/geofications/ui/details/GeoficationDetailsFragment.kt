@@ -1,6 +1,7 @@
 package com.example.geofications.ui.details
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -9,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.databinding.DataBindingUtil
@@ -20,6 +23,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.geofications.R
 import com.example.geofications.data.GeoficationDatabase
 import com.example.geofications.databinding.FragmentGeoficationDetailsBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
 class GeoficationDetailsFragment() : Fragment() {
@@ -71,8 +75,8 @@ class GeoficationDetailsFragment() : Fragment() {
         // Add an Observer on the state variable for Navigating.
         geoficationDetailsViewModel.navigateToMain.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                this.findNavController().navigateUp()
                 geoficationDetailsViewModel.doneNavigating()
+                this.findNavController().navigateUp()
             }
         })
 
@@ -101,6 +105,23 @@ class GeoficationDetailsFragment() : Fragment() {
 
             val imm = requireActivity().getSystemService(InputMethodManager::class.java)
             imm.showSoftInput(titleEditText, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        /**
+         * Call dialog if geofication is edited and not saved
+         */
+        requireActivity().onBackPressedDispatcher.addCallback {
+            if (geoficationDetailsViewModel.title.value != geoficationDetailsViewModel.oldTitle.value) {
+                this.isEnabled = true
+                showExitWithoutSaveDialog(this)
+            } else {
+                this.isEnabled = false
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
         }
     }
 
@@ -157,4 +178,26 @@ class GeoficationDetailsFragment() : Fragment() {
         val dialogFragment = TimeSelectionDialogFragment()
         dialogFragment.show(childFragmentManager, "game")
     }
+
+    /**
+     * Dialog if geofication is edited and not saved
+     */
+    private fun showExitWithoutSaveDialog(onBackPressedCallback: OnBackPressedCallback) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Exit without save?")
+            .setNegativeButton("Cancel") {dialog, which ->
+                dialog.cancel()
+            }
+            .setPositiveButton("Exit") {dialog, which ->
+                if (onBackPressedCallback.isEnabled) {
+                    onBackPressedCallback.isEnabled = false
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                    dialog.cancel()
+                }
+                dialog.cancel()
+            }
+            .show()
+    }
+
+
 }

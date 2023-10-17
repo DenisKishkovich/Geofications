@@ -30,4 +30,9 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         return findNavController(R.id.nav_host_fragment).navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+    /*TODO 1.request notification permission
+      TODO 2. check alarmManager if device restarts
+      TODO 3. scroll to top when new geofication added
+    */
 }
