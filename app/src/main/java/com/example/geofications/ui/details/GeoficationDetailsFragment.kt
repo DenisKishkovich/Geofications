@@ -116,7 +116,7 @@ class GeoficationDetailsFragment() : Fragment() {
          * Call dialog if geofication is edited and not saved
          */
         requireActivity().onBackPressedDispatcher.addCallback {
-            if (geoficationDetailsViewModel.title.value != geoficationDetailsViewModel.oldTitle.value) {
+            if (geoficationDetailsViewModel.title.value != geoficationDetailsViewModel.oldTitle.value  && argGeoficationID != -1L) {
                 this.isEnabled = true
                 showExitWithoutSaveDialog(this)
             } else {
@@ -124,10 +124,6 @@ class GeoficationDetailsFragment() : Fragment() {
                 findNavController().navigateUp()
             }
         }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
     }
 
     /**

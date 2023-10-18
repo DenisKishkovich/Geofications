@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return when (navController.currentDestination?.id) {
+            // NavigateUp behavior as back pressed in GeoficationDetailsFragment
             R.id.geoficationDetailsFragment -> {
                 onBackPressedDispatcher.onBackPressed()
                 true
@@ -37,5 +38,6 @@ class MainActivity : AppCompatActivity() {
 
     /*TODO 1.request notification permission
       TODO 2. check alarmManager if device restarts
+      TODO 3. переделать диалоги в material
     */
 }
