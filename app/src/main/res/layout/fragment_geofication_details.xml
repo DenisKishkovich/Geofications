@@ -56,7 +56,9 @@
                 android:maxLength="30"
                 android:maxLines="3"
                 android:paddingStart="16dp"
+                android:paddingTop="4dp"
                 android:paddingEnd="16dp"
+                android:paddingBottom="4dp"
                 android:scrollHorizontally="false"
                 android:text="@={viewModel.title}"
                 android:textSize="30sp"
@@ -93,7 +95,6 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/datetime_chip"
-                style="@style/Widget.MaterialComponents.Chip.Entry"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"

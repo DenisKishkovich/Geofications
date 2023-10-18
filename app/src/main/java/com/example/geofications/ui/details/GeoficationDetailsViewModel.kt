@@ -409,6 +409,10 @@ class GeoficationDetailsViewModel(
         _dateTimeAlarmOn.value = false
         _dateTimeInMillisForAlarm.value = null
 
+        hourForAlarm.value = null
+        minuteForAlarm.value = null
+        dateInMillisForAlarm.value = null
+
         if (!isNewGeofication) {
             cancelDateTimeNotificationAndAlarm(createPendingIntentForDateTimeAlarm())
 
