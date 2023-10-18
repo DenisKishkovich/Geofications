@@ -1,16 +1,13 @@
 package com.example.geofications
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toolbar
-import androidx.navigation.NavController
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import com.example.geofications.ui.main.MainFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,7 +25,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return findNavController(R.id.nav_host_fragment).navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        val navController = findNavController(R.id.nav_host_fragment)
+        return when (navController.currentDestination?.id) {
+            R.id.geoficationDetailsFragment -> {
+                onBackPressedDispatcher.onBackPressed()
+                true
+            }
+            else -> navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        }
     }
 
     /*TODO 1.request notification permission
