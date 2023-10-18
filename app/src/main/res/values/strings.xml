@@ -19,4 +19,6 @@
     <string name="dialog_save_button">Save</string>
     <string name="dialog_cancel_button">Cancel</string>
     <string name="dialog_select_time_button">Select Time</string>
+    <string name="dialog_exit_without_save_request">Exit without save?</string>
+    <string name="dialog_exit_button">Exit</string>
 </resources>

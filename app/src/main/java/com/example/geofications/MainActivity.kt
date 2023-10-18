@@ -38,6 +38,5 @@ class MainActivity : AppCompatActivity() {
 
     /*TODO 1.request notification permission
       TODO 2. check alarmManager if device restarts
-      TODO 3. переделать диалоги в material
     */
 }

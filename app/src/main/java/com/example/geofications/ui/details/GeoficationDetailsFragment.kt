@@ -185,11 +185,11 @@ class GeoficationDetailsFragment() : Fragment() {
      */
     private fun showExitWithoutSaveDialog(onBackPressedCallback: OnBackPressedCallback) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Exit without save?")
-            .setNegativeButton("Cancel") {dialog, which ->
+            .setTitle(getString(R.string.dialog_exit_without_save_request))
+            .setNegativeButton(getString(R.string.dialog_cancel_button)) {dialog, which ->
                 dialog.cancel()
             }
-            .setPositiveButton("Exit") {dialog, which ->
+            .setPositiveButton(getString(R.string.dialog_exit_button)) { dialog, which ->
                 if (onBackPressedCallback.isEnabled) {
                     onBackPressedCallback.isEnabled = false
                     findNavController().navigateUp()
