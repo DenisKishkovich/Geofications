@@ -1,9 +1,9 @@
 package com.example.geofications.ui.details
 
 
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -17,7 +17,6 @@ import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.databinding.DataBindingUtil
@@ -34,6 +33,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
 class GeoficationDetailsFragment() : Fragment() {
+
+    private lateinit var timeSelectionDialogFragment: TimeSelectionDialogFragment
 
     private lateinit var geoficationDetailsViewModel: GeoficationDetailsViewModel
 
@@ -103,17 +104,13 @@ class GeoficationDetailsFragment() : Fragment() {
         })
 
         requestNotificationsPermissionLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-                if (!isGranted) {
-                    if (Build.VERSION.SDK_INT >= 33) {
-                        if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
-                            showNotificationPermissionRationaleDialog()
-                        }
-                    }
-                }
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             }
 
-
+        // Request notifications permission
+        if (Build.VERSION.SDK_INT >= 33) {
+            requestNotificationsPermissionRationale()
+        }
 
         return binding.root
     }
@@ -184,12 +181,6 @@ class GeoficationDetailsFragment() : Fragment() {
                     }
 
                     R.id.create_notification_menu_item -> {
-                        // Request notifications permission
-
-                        if (Build.VERSION.SDK_INT >= 33) {
-                            requestNotificationsPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-                        }
-
                         showTimeSelectionDialog()
                         true
                     }
@@ -200,13 +191,23 @@ class GeoficationDetailsFragment() : Fragment() {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun requestNotificationsPermissionRationale() {
+        if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
+            showNotificationPermissionRationaleDialog()
+        } else {
+            requestNotificationsPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
 
     /**
      * Show dialog of time & date selection
      */
     private fun showTimeSelectionDialog() {
-        val dialogFragment = TimeSelectionDialogFragment()
-        dialogFragment.show(childFragmentManager, "game")
+        timeSelectionDialogFragment = TimeSelectionDialogFragment()
+        timeSelectionDialogFragment.show(childFragmentManager, "game")
+
     }
 
     /**
@@ -237,14 +238,14 @@ class GeoficationDetailsFragment() : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.dialog_title_get_notified))
             .setMessage(getString(R.string.dialog_message_notifications_permission))
-            .setNegativeButton(getString(R.string.dialog_cancel_button)) { dialog, which ->
+            .setIcon(android.R.drawable.ic_popup_reminder)
+            .setNegativeButton(getString(R.string.dialog_button_skip)) { dialog, which ->
                 dialog.cancel()
             }
-            .setPositiveButton(getString(R.string.dialog_button_notify_me)) { dialog, which ->
+            .setPositiveButton(getString(R.string.dialog_button_i_understand)) { dialog, which ->
                 requestNotificationsPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                 dialog.cancel()
             }
-            .setCancelable(false)
             .show()
     }
 }

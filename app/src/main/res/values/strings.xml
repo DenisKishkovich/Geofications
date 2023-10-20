@@ -22,6 +22,7 @@
     <string name="dialog_exit_without_save_request">Exit without save?</string>
     <string name="dialog_exit_button">Exit</string>
     <string name="dialog_title_get_notified">Get notified!</string>
-    <string name="dialog_message_notifications_permission">Notifications permission is required to send notifications</string>
-    <string name="dialog_button_notify_me">Notify me!</string>
+    <string name="dialog_message_notifications_permission">Notifications permission is required to send notifications. Without it you won\'t receive reminders.</string>
+    <string name="dialog_button_skip">Skip</string>
+    <string name="dialog_button_i_understand">I understand</string>
 </resources>
