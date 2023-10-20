@@ -1,8 +1,9 @@
 package com.example.geofications.ui.details
 
-import android.content.Context
+
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -13,6 +14,10 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.databinding.DataBindingUtil
@@ -21,6 +26,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+
 import com.example.geofications.R
 import com.example.geofications.data.GeoficationDatabase
 import com.example.geofications.databinding.FragmentGeoficationDetailsBinding
@@ -32,6 +38,9 @@ class GeoficationDetailsFragment() : Fragment() {
     private lateinit var geoficationDetailsViewModel: GeoficationDetailsViewModel
 
     private lateinit var binding: FragmentGeoficationDetailsBinding
+
+    // Variable for launching request of notifications permission
+    private lateinit var requestNotificationsPermissionLauncher: ActivityResultLauncher<String>
 
     private var argGeoficationID = -1L
 
@@ -93,6 +102,19 @@ class GeoficationDetailsFragment() : Fragment() {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         })
 
+        requestNotificationsPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                if (!isGranted) {
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
+                            showNotificationPermissionRationaleDialog()
+                        }
+                    }
+                }
+            }
+
+
+
         return binding.root
     }
 
@@ -116,7 +138,7 @@ class GeoficationDetailsFragment() : Fragment() {
          * Call dialog if geofication is edited and not saved
          */
         requireActivity().onBackPressedDispatcher.addCallback {
-            if (geoficationDetailsViewModel.title.value != geoficationDetailsViewModel.oldTitle.value  && argGeoficationID != -1L) {
+            if ((geoficationDetailsViewModel.title.value != geoficationDetailsViewModel.oldTitle.value || geoficationDetailsViewModel.description.value != geoficationDetailsViewModel.oldDescription.value || geoficationDetailsViewModel.isCompleted.value != geoficationDetailsViewModel.oldIsCompleted.value) && argGeoficationID != -1L) {
                 this.isEnabled = true
                 showExitWithoutSaveDialog(this)
             } else {
@@ -162,9 +184,16 @@ class GeoficationDetailsFragment() : Fragment() {
                     }
 
                     R.id.create_notification_menu_item -> {
+                        // Request notifications permission
+
+                        if (Build.VERSION.SDK_INT >= 33) {
+                            requestNotificationsPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                        }
+
                         showTimeSelectionDialog()
                         true
                     }
+
                     else -> false
                 }
             }
@@ -186,7 +215,7 @@ class GeoficationDetailsFragment() : Fragment() {
     private fun showExitWithoutSaveDialog(onBackPressedCallback: OnBackPressedCallback) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.dialog_exit_without_save_request))
-            .setNegativeButton(getString(R.string.dialog_cancel_button)) {dialog, which ->
+            .setNegativeButton(getString(R.string.dialog_cancel_button)) { dialog, which ->
                 dialog.cancel()
             }
             .setPositiveButton(getString(R.string.dialog_exit_button)) { dialog, which ->
@@ -197,6 +226,25 @@ class GeoficationDetailsFragment() : Fragment() {
                 }
                 dialog.cancel()
             }
+            .show()
+    }
+
+    /**
+     * Dialog for requesting notification permission rationale
+     */
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun showNotificationPermissionRationaleDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.dialog_title_get_notified))
+            .setMessage(getString(R.string.dialog_message_notifications_permission))
+            .setNegativeButton(getString(R.string.dialog_cancel_button)) { dialog, which ->
+                dialog.cancel()
+            }
+            .setPositiveButton(getString(R.string.dialog_button_notify_me)) { dialog, which ->
+                requestNotificationsPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                dialog.cancel()
+            }
+            .setCancelable(false)
             .show()
     }
 }

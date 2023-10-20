@@ -85,6 +85,17 @@ class GeoficationDetailsViewModel(
         get() = _oldDescription
 
     /**
+     * "Inner" old isCompleted of geofication (when loaded)
+     */
+    private val _oldIsCompleted = MutableLiveData<Boolean>()
+
+    /**
+     *" Outer" old isCompleted of geofication (when loaded)
+     */
+    val oldIsCompleted: LiveData<Boolean>
+        get() = _oldIsCompleted
+
+    /**
      * "Inner" variable which triggers the snackbar
      */
     private val _snackbarText = MutableLiveData<Int>()
@@ -154,6 +165,7 @@ class GeoficationDetailsViewModel(
             if (geofication != null) {
                 _oldTitle.value = geofication.title
                 _oldDescription.value = geofication.description
+                _oldIsCompleted.value = geofication.isCompleted
 
                 title.value = geofication.title
                 description.value = geofication.description
