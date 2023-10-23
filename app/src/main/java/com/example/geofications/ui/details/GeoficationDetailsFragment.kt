@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
@@ -181,7 +182,7 @@ class GeoficationDetailsFragment() : Fragment() {
                     }
 
                     R.id.create_notification_menu_item -> {
-                        showTimeSelectionDialog()
+                        showNotifyBottomSheetDialog()
                         true
                     }
 
@@ -206,7 +207,7 @@ class GeoficationDetailsFragment() : Fragment() {
      */
     private fun showTimeSelectionDialog() {
         timeSelectionDialogFragment = TimeSelectionDialogFragment()
-        timeSelectionDialogFragment.show(childFragmentManager, "game")
+        timeSelectionDialogFragment.show(childFragmentManager, "TimeSelectionDialog")
 
     }
 
@@ -247,5 +248,13 @@ class GeoficationDetailsFragment() : Fragment() {
                 dialog.cancel()
             }
             .show()
+    }
+
+    private fun showNotifyBottomSheetDialog() {
+        val notifyBottomSheetDialogFragment = NotifyBottomSheetDialogFragment(
+            BottomSheetItemClickListener { showTimeSelectionDialog() },
+            BottomSheetItemClickListener { showTimeSelectionDialog() })
+
+        notifyBottomSheetDialogFragment.show(childFragmentManager, "NotifyBottomSheetDialog")
     }
 }
