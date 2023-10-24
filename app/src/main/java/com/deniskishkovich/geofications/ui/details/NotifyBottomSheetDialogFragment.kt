@@ -7,9 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.deniskishkovich.geofications.R
+import com.deniskishkovich.geofications.databinding.NotifyBottomSheetContentBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class NotifyBottomSheetDialogFragment(private val clickListenerTimeView: BottomSheetItemClickListener, private val clickListenerGeoView: BottomSheetItemClickListener): BottomSheetDialogFragment() {
+
+    private var _binding: NotifyBottomSheetContentBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
     // Inflate dialog with layout
     override fun onCreateView(
@@ -17,7 +24,8 @@ class NotifyBottomSheetDialogFragment(private val clickListenerTimeView: BottomS
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.notify_bottom_sheet_content, container, false)
+        _binding = NotifyBottomSheetContentBinding.inflate(inflater, container, false)
+        return binding.root
 
     }
 
@@ -36,6 +44,11 @@ class NotifyBottomSheetDialogFragment(private val clickListenerTimeView: BottomS
             clickListenerGeoView.onClick()
             dismiss()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
 

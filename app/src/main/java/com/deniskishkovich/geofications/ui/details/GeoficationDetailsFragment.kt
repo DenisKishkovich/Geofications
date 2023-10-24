@@ -4,40 +4,28 @@ package com.deniskishkovich.geofications.ui.details
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-
 import com.deniskishkovich.geofications.R
 import com.deniskishkovich.geofications.data.GeoficationDatabase
 import com.deniskishkovich.geofications.databinding.FragmentGeoficationDetailsBinding
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.deniskishkovich.geofications.ui.maps.MapsFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
 class GeoficationDetailsFragment() : Fragment() {
-
-    private lateinit var mapsBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
-
-    private lateinit var timeSelectionDialogFragment: TimeSelectionDialogFragment
 
     private lateinit var geoficationDetailsViewModel: GeoficationDetailsViewModel
 
@@ -74,11 +62,7 @@ class GeoficationDetailsFragment() : Fragment() {
         binding.viewModel = geoficationDetailsViewModel
         binding.lifecycleOwner = this
 
-        createMenu()
-
-        // Setting collapsed state of maps bottom sheet
-        mapsBottomSheetBehavior = BottomSheetBehavior.from(binding.mapsBottomSheet)
-        mapsBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        setToolbar(args.appbarTitle)
 
         // Set date/time chip behavior
         binding.datetimeChip.apply {
@@ -153,49 +137,40 @@ class GeoficationDetailsFragment() : Fragment() {
     }
 
     /**
-     * Create the menu
+     * Set toolbar appearance and behavior
      */
-    private fun createMenu() {
-        // Init the menu
-        // The usage of an interface lets you inject your own implementation
-        val menuHost: MenuHost = requireActivity()
-
-        // Add menu items without using the Fragment Menu APIs
-        // Note how we can tie the MenuProvider to the viewLifecycleOwner
-        // and an optional Lifecycle.State (here, RESUMED) to indicate when
-        // the menu should be visible
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.details_fragment_menu, menu)
-
-                // Don't show delete button if new geofication
-                if (argGeoficationID == -1L) {
-                    menu.findItem(R.id.delete_menu_item).isVisible = false
-                }
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return when (menuItem.itemId) {
-                    R.id.delete_menu_item -> {
-                        if (argGeoficationID == -1L) {
-                            return false
-                        }
-
-                        geoficationDetailsViewModel.deleteGeofication()
-                        Toast.makeText(context, R.string.notification_deleted, Toast.LENGTH_SHORT)
-                            .show()
-                        true
+    private fun setToolbar(appBarTitle: String) {
+        val toolbar = binding.detailsFragmentToolbar
+        toolbar.title = appBarTitle
+        toolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.delete_menu_item -> {
+                    if (argGeoficationID == -1L) {
+                        return@setOnMenuItemClickListener false
                     }
 
-                    R.id.create_notification_menu_item -> {
-                        showNotifyBottomSheetDialog()
-                        true
-                    }
-
-                    else -> false
+                    geoficationDetailsViewModel.deleteGeofication()
+                    Toast.makeText(context, R.string.notification_deleted, Toast.LENGTH_SHORT)
+                        .show()
+                    true
                 }
+
+                R.id.create_notification_menu_item -> {
+                    showNotifyBottomSheetDialog()
+                    true
+                }
+
+                else -> false
             }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        }
+
+        // Don't show delete button if new geofication
+        if (argGeoficationID == -1L) {
+            toolbar.menu.findItem(R.id.delete_menu_item).isVisible = false
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -212,7 +187,7 @@ class GeoficationDetailsFragment() : Fragment() {
      * Show dialog of time & date selection
      */
     private fun showTimeSelectionDialog() {
-        timeSelectionDialogFragment = TimeSelectionDialogFragment()
+        val timeSelectionDialogFragment = TimeSelectionDialogFragment()
         timeSelectionDialogFragment.show(childFragmentManager, "TimeSelectionDialog")
 
     }
@@ -259,8 +234,20 @@ class GeoficationDetailsFragment() : Fragment() {
     private fun showNotifyBottomSheetDialog() {
         val notifyBottomSheetDialogFragment = NotifyBottomSheetDialogFragment(
             BottomSheetItemClickListener { showTimeSelectionDialog() },
-            BottomSheetItemClickListener { mapsBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED })
+            BottomSheetItemClickListener { showMapsDialog() })
 
         notifyBottomSheetDialogFragment.show(childFragmentManager, "NotifyBottomSheetDialog")
+    }
+
+    private fun showMapsDialog() {
+        val mapsDialogFragment = MapsFragment()
+        mapsDialogFragment.show(childFragmentManager, "MapsDialogFragment")
+
+//        val transaction = childFragmentManager.beginTransaction()
+//        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+//        transaction
+//            .add(R.id.details_container_view, mapsDialogFragment)
+//            .addToBackStack(null)
+//            .commit()
     }
 }
