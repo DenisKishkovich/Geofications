@@ -5,14 +5,15 @@ plugins {
     id "androidx.navigation.safeargs.kotlin"
     id 'kotlin-kapt'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+
 }
 
 android {
-    namespace 'com.example.geofications'
+    namespace 'com.deniskishkovich.geofications'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.geofications"
+        applicationId 'com.deniskishkovich.geofications'
         minSdk 24
         targetSdk 34
         versionCode 1

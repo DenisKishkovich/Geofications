@@ -9,15 +9,15 @@
 
         <variable
             name="exactGeofication"
-            type="com.example.geofications.data.Geofication" />
+            type="com.deniskishkovich.geofications.data.Geofication" />
 
         <variable
             name="clickListener"
-            type="com.example.geofications.GeoficationClickListener" />
+            type="com.deniskishkovich.geofications.GeoficationClickListener" />
 
         <variable
             name="viewModel"
-            type="com.example.geofications.ui.main.MainViewModel" />
+            type="com.deniskishkovich.geofications.ui.main.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
