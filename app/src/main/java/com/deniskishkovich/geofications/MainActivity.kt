@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity() {
     /*TODO 1.request notification permission
       TODO 2. check alarmManager if device restarts
       TODO 3. adjust style material3
-      TODO 4. add AppBarLayout, Toolbar
-      TODO 5. Completed checkbox if not saved in details fragment
+      TODO 4. time selection dialog rotation bug
     */
 }

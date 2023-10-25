@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.maps.MapsFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
     
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -13,14 +14,18 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/maps_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel" />
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            app:titleTextAppearance="?attr/textAppearanceTitleLarge"
+            app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
+            app:title="TITLE"/>
         
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/map"
@@ -30,6 +35,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:context=".ui.maps.MapsFragment" />
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

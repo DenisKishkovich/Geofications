@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -85,7 +86,9 @@ class GeoficationDetailsFragment() : Fragment() {
         // Add an Observer on the state variable for snackbars.
         geoficationDetailsViewModel.snackbarText.observe(viewLifecycleOwner, Observer {
             view?.let { gottenView ->
-                Snackbar.make(gottenView, getText(it), Snackbar.LENGTH_SHORT).show()
+                val snackbar = Snackbar.make(gottenView, getText(it), Snackbar.LENGTH_SHORT)
+                snackbar.anchorView = binding.DetailsFab
+                snackbar.show()
             }
         })
 
@@ -186,7 +189,7 @@ class GeoficationDetailsFragment() : Fragment() {
     /**
      * Show dialog of time & date selection
      */
-    private fun showTimeSelectionDialog() {
+     fun showTimeSelectionDialog() {
         val timeSelectionDialogFragment = TimeSelectionDialogFragment()
         timeSelectionDialogFragment.show(childFragmentManager, "TimeSelectionDialog")
 
@@ -232,22 +235,19 @@ class GeoficationDetailsFragment() : Fragment() {
     }
 
     private fun showNotifyBottomSheetDialog() {
-        val notifyBottomSheetDialogFragment = NotifyBottomSheetDialogFragment(
-            BottomSheetItemClickListener { showTimeSelectionDialog() },
-            BottomSheetItemClickListener { showMapsDialog() })
-
+        val notifyBottomSheetDialogFragment = NotifyBottomSheetDialogFragment()
         notifyBottomSheetDialogFragment.show(childFragmentManager, "NotifyBottomSheetDialog")
     }
 
-    private fun showMapsDialog() {
+    fun showMapsDialog() {
         val mapsDialogFragment = MapsFragment()
-        mapsDialogFragment.show(childFragmentManager, "MapsDialogFragment")
+//        mapsDialogFragment.show(childFragmentManager, "MapsDialogFragment")
 
-//        val transaction = childFragmentManager.beginTransaction()
-//        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-//        transaction
-//            .add(R.id.details_container_view, mapsDialogFragment)
-//            .addToBackStack(null)
-//            .commit()
+        val transaction = childFragmentManager.beginTransaction()
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        transaction
+            .add(R.id.details_container_view, mapsDialogFragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

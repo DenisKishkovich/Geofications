@@ -44,7 +44,6 @@ class MapsFragment : DialogFragment() {
         val view =  inflater.inflate(R.layout.fragment_maps, container, false)
 
         val toolbar = view.findViewById<MaterialToolbar>(R.id.maps_toolbar)
-        toolbar.title = "TOOLBAR TITLE"
         toolbar.setNavigationOnClickListener { dismiss() }
         return view
     }

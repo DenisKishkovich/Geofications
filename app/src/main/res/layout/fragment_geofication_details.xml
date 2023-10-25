@@ -10,6 +10,13 @@
             type="com.deniskishkovich.geofications.ui.details.GeoficationDetailsViewModel" />
     </data>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/details_container_view">
+
+
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/details_coordinator_layout"
         android:layout_width="match_parent"
@@ -128,7 +135,7 @@
             android:layout_gravity="bottom|start"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton"
+            android:id="@+id/DetailsFab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -139,4 +146,5 @@
             android:layout_gravity="bottom|end" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </FrameLayout>
 </layout>
