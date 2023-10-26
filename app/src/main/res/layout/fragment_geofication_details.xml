@@ -13,7 +13,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/details_container_view">
+        android:id="@+id/details_maps_dialog_container">
 
 
 
@@ -114,6 +114,7 @@
                     android:paddingStart="16dp"
                     android:paddingTop="8dp"
                     android:paddingEnd="16dp"
+                    android:paddingBottom="92dp"
                     android:text="@={viewModel.description}"
                     android:textSize="20sp"
                     tools:text="This is description multiline text for edit text" />

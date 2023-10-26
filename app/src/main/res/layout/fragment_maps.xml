@@ -10,7 +10,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        
+
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/maps_toolbar"
             android:layout_width="match_parent"
@@ -18,8 +18,9 @@
             android:minHeight="?attr/actionBarSize"
             app:titleTextAppearance="?attr/textAppearanceTitleLarge"
             app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
-            app:title="TITLE"/>
-        
+            app:title="@string/title_select_location"
+            app:menu="@menu/maps_dialog_fragment_toolbar"/>
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

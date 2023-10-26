@@ -5,19 +5,29 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:id="@+id/drag_handle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/time_selection_textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:drawablePadding="16dp"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:padding="16dp"
         android:text="@string/bottom_dialog_option_time"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:drawableStartCompat="@android:drawable/ic_popup_reminder"
-        tools:text="Set a reminder by time"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/drag_handle"
+        tools:text="Set a reminder by time" />
 
     <TextView
         android:id="@+id/geo_selection_textView"
@@ -25,6 +35,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:drawablePadding="16dp"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:text="@string/bottom_dialog_option_location"
         android:textSize="20sp"
         app:drawableStartCompat="@android:drawable/ic_dialog_map"

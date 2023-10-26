@@ -4,6 +4,8 @@ package com.deniskishkovich.geofications.ui.details
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -13,6 +15,7 @@ import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -25,6 +28,7 @@ import com.deniskishkovich.geofications.databinding.FragmentGeoficationDetailsBi
 import com.deniskishkovich.geofications.ui.maps.MapsFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.view.ActionMode
 
 class GeoficationDetailsFragment() : Fragment() {
 
@@ -234,19 +238,24 @@ class GeoficationDetailsFragment() : Fragment() {
             .show()
     }
 
+    /**
+     * Dialog for selecting the type of reminder (on time or on location)
+     */
     private fun showNotifyBottomSheetDialog() {
         val notifyBottomSheetDialogFragment = NotifyBottomSheetDialogFragment()
         notifyBottomSheetDialogFragment.show(childFragmentManager, "NotifyBottomSheetDialog")
     }
 
+    /**
+     * Dialog for selecting a location for the reminder
+     */
     fun showMapsDialog() {
         val mapsDialogFragment = MapsFragment()
-//        mapsDialogFragment.show(childFragmentManager, "MapsDialogFragment")
 
         val transaction = childFragmentManager.beginTransaction()
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         transaction
-            .add(R.id.details_container_view, mapsDialogFragment)
+            .add(R.id.details_maps_dialog_container, mapsDialogFragment)
             .addToBackStack(null)
             .commit()
     }

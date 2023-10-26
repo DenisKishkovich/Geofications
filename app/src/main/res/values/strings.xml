@@ -27,4 +27,5 @@
     <string name="dialog_button_i_understand">I understand</string>
     <string name="bottom_dialog_option_time">Set a reminder by time</string>
     <string name="bottom_dialog_option_location">Set a reminder by location</string>
+    <string name="title_select_location">Select a location</string>
 </resources>
