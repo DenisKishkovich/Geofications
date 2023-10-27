@@ -28,4 +28,9 @@
     <string name="bottom_dialog_option_time">Set a reminder by time</string>
     <string name="bottom_dialog_option_location">Set a reminder by location</string>
     <string name="title_select_location">Select a location</string>
+    <string name="dialog_Title_background_location">Missing \"All time\" location permission</string>
+    <string name="dialog_background_location_message">To set reminders by location, the application needs permission for \"All the time\" location access. Pleas set this permission in settings.</string>
+    <string name="dialog_button_open_setings">Open settings</string>
+    <string name="snackbar_location_permission">You need to grant location permissions to set the reminder</string>
+    <string name="settings">Settings</string>
 </resources>
