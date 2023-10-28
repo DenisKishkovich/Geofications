@@ -18,6 +18,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.deniskishkovich.geofications.BuildConfig
 import com.deniskishkovich.geofications.R
+import com.deniskishkovich.geofications.databinding.FragmentMapsBinding
 import com.deniskishkovich.geofications.ui.details.GeoficationDetailsViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -26,11 +27,19 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
 class MapsFragment : DialogFragment(), OnMapReadyCallback {
+
+    private var _binding: FragmentMapsBinding? = null
+
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
+
+    private val mapsViewModel: MapsViewModel by viewModels()
 
     private val sharedViewModel: GeoficationDetailsViewModel by viewModels(ownerProducer = { requireParentFragment() })
 
@@ -40,7 +49,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
 
     private var lastKnownLocation: Location? = null
 
-    // A default location (Sydney, Australia) and default zoom to use when location permission is
+    // A default location and default zoom to use when location permission is
     // not granted.
     private val defaultLocation = LatLng(59.939874, 30.314526)
 
@@ -53,24 +62,42 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_maps, container, false)
+        _binding = FragmentMapsBinding.inflate(inflater, container, false)
 
         // set Toolbar
-        val toolbar = rootView.findViewById<MaterialToolbar>(R.id.maps_toolbar)
+        val toolbar = binding.mapsToolbar
         toolbar.setNavigationOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.save_menu_item -> {
-                    Toast.makeText(context, "saved", Toast.LENGTH_SHORT).show()
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
-                    true
+                    getLocationPermission()
+
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                        if (foregroundLocationPermissionGranted && foregroundAndBackgroundLocationPermissionGranted) {
+                            Toast.makeText(context, "saved", Toast.LENGTH_SHORT).show()
+                            requireActivity().onBackPressedDispatcher.onBackPressed()
+                            true
+                        } else {
+                            false
+                        }
+                    } else {
+                        if (foregroundLocationPermissionGranted) {
+                            Toast.makeText(context, "saved", Toast.LENGTH_SHORT).show()
+                            requireActivity().onBackPressedDispatcher.onBackPressed()
+                            true
+                        } else {
+                            makeSnackbarForPermissions()
+                            false
+                        }
+                    }
+
                 }
 
                 else -> false
             }
         }
 
-        return rootView
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -100,6 +127,17 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
 
         // Get the current location of the device and set the position of the map.
         getDeviceLocation()
+
+        setMapClick()
+
+        // Create marker when selectedLocationLatLng in view model updates
+        mapsViewModel.selectedLocationLatLng.observe(viewLifecycleOwner) {
+            it?.let {
+                map.clear()
+                map.addMarker(MarkerOptions()
+                    .position(it))
+            }
+        }
     }
 
     /**
@@ -111,37 +149,54 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         try {
             if (foregroundLocationPermissionGranted) {
                 map.isMyLocationEnabled = true
-                val locationResult = fusedLocationProviderClient.lastLocation
-                locationResult.addOnCompleteListener(requireActivity()) { task ->
-                    if (task.isSuccessful) {
-                        // Set the map's camera position to the current location of the device.
-                        lastKnownLocation = task.result
 
-                        if (lastKnownLocation != null) {
+                if (mapsViewModel.selectedLocationLatLng.value == null) {
+                    val locationResult = fusedLocationProviderClient.lastLocation
+                    locationResult.addOnCompleteListener(requireActivity()) { task ->
+                        if (task.isSuccessful) {
+                            // Set the map's camera position to the current location of the device.
+                            lastKnownLocation = task.result
+
+                            if (lastKnownLocation != null) {
+                                map.moveCamera(
+                                    CameraUpdateFactory.newLatLngZoom(
+                                        LatLng(
+                                            lastKnownLocation!!.latitude,
+                                            lastKnownLocation!!.longitude
+                                        ),
+                                        DEFAULT_ZOOM.toFloat()
+                                    )
+                                )
+                            }
+                        } else {
                             map.moveCamera(
                                 CameraUpdateFactory.newLatLngZoom(
-                                    LatLng(
-                                        lastKnownLocation!!.latitude,
-                                        lastKnownLocation!!.longitude
-                                    ),
+                                    defaultLocation,
                                     DEFAULT_ZOOM.toFloat()
                                 )
                             )
                         }
-                    } else {
-                        map.moveCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                defaultLocation,
-                                DEFAULT_ZOOM.toFloat()
-                            )
-                        )
                     }
+                } else {
+                    map.moveCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            mapsViewModel.selectedLocationLatLng.value!!,
+                            DEFAULT_ZOOM.toFloat()
+                        )
+                    )
                 }
             }
         } catch (e: SecurityException) {
             Log.e("Exception: %s", e.message, e)
         }
     }
+
+    private fun setMapClick() {
+        map.setOnMapClickListener { latLng ->
+            mapsViewModel.setSelectedLocationLatLng(latLng)
+        }
+    }
+
 
     /**
      * Prompt user for location permissions
@@ -161,18 +216,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             foregroundLocationPermissionGranted = true
-
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                if (ActivityCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    foregroundAndBackgroundLocationPermissionGranted = true
-                } else {
-                    showRequestBackgroundPermissionDialog()
-                }
-            }
+            checkBackgroundPermissionAndShowDialog()
 
         } else {
             makeSnackbarForPermissions()
@@ -220,10 +264,10 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
             .setTitle(getString(R.string.dialog_Title_background_location))
             .setMessage(getString(R.string.dialog_background_location_message))
             .setIcon(android.R.drawable.ic_dialog_map)
-            .setNegativeButton(getString(R.string.dialog_button_skip)) { dialog, which ->
+            .setNegativeButton(getString(R.string.dialog_button_skip)) { dialog, _ ->
                 dialog.cancel()
             }
-            .setPositiveButton(getString(R.string.dialog_button_open_setings)) { dialog, which ->
+            .setPositiveButton(getString(R.string.dialog_button_open_setings)) { dialog, _ ->
                 startActivity(Intent().apply {
                     action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                     data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
@@ -246,6 +290,25 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
                     })
                 }.show()
         }
+    }
+
+    private fun checkBackgroundPermissionAndShowDialog() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                foregroundAndBackgroundLocationPermissionGranted = true
+            } else {
+                showRequestBackgroundPermissionDialog()
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

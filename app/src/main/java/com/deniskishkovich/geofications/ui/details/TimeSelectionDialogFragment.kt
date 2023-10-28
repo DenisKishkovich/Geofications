@@ -32,13 +32,13 @@ class TimeSelectionDialogFragment : DialogFragment() {
             builder.setView(dialogView)
                 .setPositiveButton(
                     getString(R.string.dialog_save_button)
-                ) { dialog, id ->
+                ) { dialog, _ ->
                     sharedViewModel.updateDateTimeAlarm()
                     dialog.cancel()
                 }
                 .setNegativeButton(
                     getString(R.string.dialog_cancel_button)
-                ) { dialog, id ->
+                ) { dialog, _ ->
                     dialog.cancel()
                 }
             builder.create()

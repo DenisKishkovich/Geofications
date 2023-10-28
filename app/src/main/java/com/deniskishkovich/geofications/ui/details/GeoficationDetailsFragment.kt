@@ -80,21 +80,21 @@ class GeoficationDetailsFragment() : Fragment() {
         }
 
         // Add an Observer on the state variable for Navigating.
-        geoficationDetailsViewModel.navigateToMain.observe(viewLifecycleOwner, Observer {
+        geoficationDetailsViewModel.navigateToMain.observe(viewLifecycleOwner) {
             if (it == true) {
                 geoficationDetailsViewModel.doneNavigating()
                 this.findNavController().navigateUp()
             }
-        })
+        }
 
         // Add an Observer on the state variable for snackbars.
-        geoficationDetailsViewModel.snackbarText.observe(viewLifecycleOwner, Observer {
+        geoficationDetailsViewModel.snackbarText.observe(viewLifecycleOwner) {
             view?.let { gottenView ->
                 val snackbar = Snackbar.make(gottenView, getText(it), Snackbar.LENGTH_SHORT)
                 snackbar.anchorView = binding.DetailsFab
                 snackbar.show()
             }
-        })
+        }
 
         // Add an Observer on the state variable for toasts.
         geoficationDetailsViewModel.toastText.observe(viewLifecycleOwner, Observer {
@@ -205,10 +205,10 @@ class GeoficationDetailsFragment() : Fragment() {
     private fun showExitWithoutSaveDialog(onBackPressedCallback: OnBackPressedCallback) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.dialog_exit_without_save_request))
-            .setNegativeButton(getString(R.string.dialog_cancel_button)) { dialog, which ->
+            .setNegativeButton(getString(R.string.dialog_cancel_button)) { dialog, _ ->
                 dialog.cancel()
             }
-            .setPositiveButton(getString(R.string.dialog_exit_button)) { dialog, which ->
+            .setPositiveButton(getString(R.string.dialog_exit_button)) { dialog, _ ->
                 if (onBackPressedCallback.isEnabled) {
                     onBackPressedCallback.isEnabled = false
                     findNavController().navigateUp()
@@ -228,10 +228,10 @@ class GeoficationDetailsFragment() : Fragment() {
             .setTitle(getString(R.string.dialog_title_get_notified))
             .setMessage(getString(R.string.dialog_message_notifications_permission))
             .setIcon(android.R.drawable.ic_popup_reminder)
-            .setNegativeButton(getString(R.string.dialog_button_skip)) { dialog, which ->
+            .setNegativeButton(getString(R.string.dialog_button_skip)) { dialog, _ ->
                 dialog.cancel()
             }
-            .setPositiveButton(getString(R.string.dialog_button_i_understand)) { dialog, which ->
+            .setPositiveButton(getString(R.string.dialog_button_i_understand)) { dialog, _ ->
                 requestNotificationsPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                 dialog.cancel()
             }
