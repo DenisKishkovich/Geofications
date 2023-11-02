@@ -4,10 +4,13 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.provider.Telephony.Mms.Addr
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +33,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import java.util.Locale
 
 class MapsFragment : DialogFragment(), OnMapReadyCallback {
 
@@ -54,7 +58,6 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
     private val defaultLocation = LatLng(59.939874, 30.314526)
 
     private var foregroundAndBackgroundLocationPermissionGranted = false
-
     private var foregroundLocationPermissionGranted = false
 
     override fun onCreateView(
@@ -136,6 +139,22 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
                 map.clear()
                 map.addMarker(MarkerOptions()
                     .position(it))
+
+                Geocoder(requireContext(), Locale.getDefault())
+                    .getAddress(it.latitude, it.longitude) { address ->
+                          if (address != null) {
+                              val addressLine = address.getAddressLine(0)
+                              val city = address.locality  // город
+                              val knownName = address.featureName // номер дома или улица или парк, пруд
+                              val thoroughfare = address.thoroughfare  // улица
+                              val sunthoroughfare = address.subThoroughfare  // номер дома
+                              // надо thoroughfare, knownName, city или если known name совп. с subThoroughfare, то known name, thoroughfare, city
+
+                              Log.i("MY TAG", "addr $addressLine, city $city, name $knownName, thoroughfare $thoroughfare, sunthoroughfare $sunthoroughfare")
+
+
+                          }
+                    }
             }
         }
     }
@@ -303,6 +322,26 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
             } else {
                 showRequestBackgroundPermissionDialog()
             }
+        }
+    }
+
+
+    fun Geocoder.getAddress(
+        latitude: Double,
+        longitude: Double,
+        address: (Address?) -> Unit
+    ) {
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            getFromLocation(latitude, longitude, 1) { address(it.firstOrNull()) }
+            return
+        }
+
+        try {
+            address(getFromLocation(latitude, longitude, 1)?.firstOrNull())
+        } catch(e: Exception) {
+            //will catch if there is an internet problem
+            address(null)
         }
     }
 
