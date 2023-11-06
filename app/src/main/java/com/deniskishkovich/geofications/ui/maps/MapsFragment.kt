@@ -8,6 +8,7 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.provider.Telephony.Mms.Addr
@@ -15,6 +16,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
@@ -31,7 +35,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.search.SearchView
 import com.google.android.material.snackbar.Snackbar
 import java.util.Locale
 
@@ -46,6 +52,8 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
     private val mapsViewModel: MapsViewModel by viewModels()
 
     private val sharedViewModel: GeoficationDetailsViewModel by viewModels(ownerProducer = { requireParentFragment() })
+
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     private lateinit var map: GoogleMap
 
@@ -64,8 +72,10 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentMapsBinding.inflate(inflater, container, false)
+
+        binding.viewModel = mapsViewModel
 
         // set Toolbar
         val toolbar = binding.mapsToolbar
@@ -100,6 +110,8 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
             }
         }
 
+
+
         return binding.root
     }
 
@@ -111,6 +123,12 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
+
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.addressBottomSheet)
+
+        if (mapsViewModel.selectedLocationAddress.value == null) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
     }
 
     /**
@@ -124,6 +142,9 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
+
+        // Set padding for google map's default buttons
+        map.setPadding(0, 300, 0, 0)
 
         // Prompt the user for permission.
         getLocationPermission()
@@ -140,21 +161,40 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
                 map.addMarker(MarkerOptions()
                     .position(it))
 
-                Geocoder(requireContext(), Locale.getDefault())
-                    .getAddress(it.latitude, it.longitude) { address ->
-                          if (address != null) {
-                              val addressLine = address.getAddressLine(0)
-                              val city = address.locality  // город
-                              val knownName = address.featureName // номер дома или улица или парк, пруд
-                              val thoroughfare = address.thoroughfare  // улица
-                              val sunthoroughfare = address.subThoroughfare  // номер дома
-                              // надо thoroughfare, knownName, city или если known name совп. с subThoroughfare, то known name, thoroughfare, city
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
-                              Log.i("MY TAG", "addr $addressLine, city $city, name $knownName, thoroughfare $thoroughfare, sunthoroughfare $sunthoroughfare")
+                mapsViewModel.getAddress()
+            }
+        }
 
+        // Show bottom sheet with address
+        mapsViewModel.selectedLocationAddress.observe(viewLifecycleOwner) {
+            binding.addressTextBottomSheet.text = it
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
 
-                          }
+        binding.mapsSearchView.editText.setOnEditorActionListener { textView, actionId, keyEvent ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                // Execute search
+                Toast.makeText(context, "search", Toast.LENGTH_SHORT).show()
+                searchLocation(binding.mapsSearchView.editText.text.toString())
+            }
+            false
+        }
+    }
+
+    private fun searchLocation(address: String) {
+        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            var addressList: MutableList<Address?>
+            geocoder.getFromLocationName(address, 5) {
+                addressList = it
+                if (addressList.size > 0) {
+                    for (oneAddress in addressList) {
+                        Log.i("MY TAG", oneAddress!!.getAddressLine(0))
                     }
+                }
             }
         }
     }
@@ -240,6 +280,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         } else {
             makeSnackbarForPermissions()
 
+            @Suppress("DEPRECATION")
             requestPermissions(
                 permissionArray,
                 REQUEST_FOREGROUND_PERMISSIONS_REQUEST_CODE
@@ -247,6 +288,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         }
     }
 
+    @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -326,24 +368,26 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
     }
 
 
-    fun Geocoder.getAddress(
-        latitude: Double,
-        longitude: Double,
-        address: (Address?) -> Unit
-    ) {
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            getFromLocation(latitude, longitude, 1) { address(it.firstOrNull()) }
-            return
-        }
-
-        try {
-            address(getFromLocation(latitude, longitude, 1)?.firstOrNull())
-        } catch(e: Exception) {
-            //will catch if there is an internet problem
-            address(null)
-        }
-    }
+//    private fun Geocoder.getAddress(
+//        latitude: Double,
+//        longitude: Double,
+//        address: (Address?) -> Unit
+//    ) {
+//
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+//            getFromLocation(latitude, longitude, 1) { address(it.firstOrNull()) }
+//            return
+//        }
+//
+//        try {
+//            address(getFromLocation(latitude, longitude, 1)?.firstOrNull())
+//        } catch(e: Exception) {
+//            //will catch if there is an internet problem
+//            view?.let { Snackbar.make(it,
+//                getString(R.string.internrt_access_problem), Snackbar.LENGTH_SHORT).show() }
+//            address(null)
+//        }
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

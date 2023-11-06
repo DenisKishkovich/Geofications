@@ -15,29 +15,11 @@
         android:layout_height="match_parent"
         android:id="@+id/details_maps_dialog_container">
 
-
-
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/details_coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
-
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:liftOnScroll="true">
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/details_fragment_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="?attr/actionBarSize"
-                app:menu="@menu/details_fragment_menu"
-                app:titleTextAppearance="?attr/textAppearanceTitleLarge"
-                app:navigationIcon="?attr/homeAsUpIndicator"/>
-
-        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -120,6 +102,21 @@
                     tools:text="This is description multiline text for edit text" />
             </ScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/details_fragment_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                app:menu="@menu/details_fragment_menu"
+                app:titleTextAppearance="?attr/textAppearanceTitleLarge"
+                app:navigationIcon="?attr/homeAsUpIndicator"/>
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <com.google.android.material.chip.Chip
             android:id="@+id/datetime_chip"

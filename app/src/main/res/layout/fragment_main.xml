@@ -12,12 +12,20 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/notif_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/list_item"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:liftOnScroll="true"
             android:fitsSystemWindows="true">
 
             <com.google.android.material.appbar.MaterialToolbar
@@ -29,15 +37,8 @@
                 app:menu="@menu/main_fragment_menu"
                 app:titleTextAppearance="?attr/textAppearanceTitleLarge"
                 app:titleCentered="true"/>
-        </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/notif_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/list_item"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add"
@@ -47,7 +48,7 @@
             android:layout_marginBottom="16dp"
             android:contentDescription="@string/fab_description_add_geofication"
             android:onClick="@{() -> mainViewModel.onFabClicked()}"
-            app:srcCompat="@android:drawable/ic_input_add"
+            android:src="@android:drawable/ic_input_add"
             android:layout_gravity="bottom|end"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

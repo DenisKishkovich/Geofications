@@ -1,64 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.maps.MapsFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
-    
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools" >
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/maps_toolbar"
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.deniskishkovich.geofications.ui.maps.MapsViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        tools:context=".ui.maps.MapsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="?attr/actionBarSize"
-            app:titleTextAppearance="?attr/textAppearanceTitleLarge"
-            app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
-            app:title="@string/title_select_location"
-            app:menu="@menu/maps_dialog_fragment_toolbar"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <com.google.android.material.search.SearchBar
+                android:id="@+id/map_searchBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="City and address"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/address_bottom_sheet_container"
-        style="@style/Widget.Material3.BottomSheet"
-        app:layout_behavior="@string/bottom_sheet_behavior" >
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:context=".ui.maps.MapsFragment" />
 
-        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/address_text_bottomSheet"
-            tools:text="4, Rudneva, St. Petersburg"
-            android:text="4, Rudneva, St. Petersburg"
-            android:textSize="20sp"/>
+            android:fitsSystemWindows="true">
 
-    </FrameLayout>
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/maps_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                app:titleTextAppearance="?attr/textAppearanceTitleLarge"
+                app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
+                app:title="@string/title_select_location"
+                app:menu="@menu/maps_dialog_fragment_toolbar"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <com.google.android.material.search.SearchView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:context=".ui.maps.MapsFragment" />
+            android:id="@+id/maps_searchView"
+            android:hint="City and address"
+            app:layout_anchor="@id/map_searchBar">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.search.SearchView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <LinearLayout
+            android:id="@+id/address_bottom_sheet"
+            style="@style/Widget.Material3.BottomSheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_behavior="@string/bottom_sheet_behavior">
 
+            <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/address_text_bottomSheet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                tools:text="4, Rudneva, St. Petersburg"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="24dp"/>
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
