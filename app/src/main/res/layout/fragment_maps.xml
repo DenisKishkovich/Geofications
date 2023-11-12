@@ -2,7 +2,7 @@
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -12,9 +12,9 @@
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-        tools:context=".ui.maps.MapsFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".ui.maps.MapsFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -25,10 +25,10 @@
                 android:id="@+id/map_searchBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="City and address"
+                android:hint="@string/hint_city_and_address"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/map"
@@ -51,19 +51,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="?attr/actionBarSize"
-                app:titleTextAppearance="?attr/textAppearanceTitleLarge"
+                app:menu="@menu/maps_dialog_fragment_toolbar"
                 app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
                 app:title="@string/title_select_location"
-                app:menu="@menu/maps_dialog_fragment_toolbar"/>
+                app:titleTextAppearance="?attr/textAppearanceTitleLarge" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
         <com.google.android.material.search.SearchView
+            android:id="@+id/maps_searchView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/maps_searchView"
-            android:hint="City and address"
+            android:hint="@string/hint_city_and_address"
             app:layout_anchor="@id/map_searchBar">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/maps_search_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/maps_search_list_item" />
 
         </com.google.android.material.search.SearchView>
 
@@ -83,11 +90,11 @@
                 android:id="@+id/address_text_bottomSheet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                tools:text="4, Rudneva, St. Petersburg"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:paddingBottom="24dp"/>
+                android:paddingBottom="24dp"
+                android:textSize="20sp"
+                tools:text="4, Rudneva, St. Petersburg" />
         </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

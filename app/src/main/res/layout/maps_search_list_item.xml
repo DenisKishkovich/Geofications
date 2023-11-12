@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="mapsViewModel"
+            type="com.deniskishkovich.geofications.ui.maps.MapsViewModel" />
+
+        <variable
+            name="exactAddress"
+            type="android.location.Address" />
+
+        <variable
+            name="clickListener"
+            type="com.deniskishkovich.geofications.ui.maps.MapSearchClickListener" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/maps_item_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:onClick="@{() -> clickListener.onClick(exactAddress)}">
+
+        <TextView
+            android:id="@+id/maps_item_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textSize="22sp"
+            tools:text="4, Rudneva, St. Petersburg"
+            android:text="@{exactAddress.getAddressLine(0)}"/>
+    </LinearLayout>
+</layout>
+

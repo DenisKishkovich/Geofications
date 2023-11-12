@@ -11,18 +11,18 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.provider.Telephony.Mms.Addr
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.deniskishkovich.geofications.BuildConfig
 import com.deniskishkovich.geofications.R
 import com.deniskishkovich.geofications.databinding.FragmentMapsBinding
@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.google.android.material.search.SearchView
 import com.google.android.material.snackbar.Snackbar
 import java.util.Locale
@@ -85,7 +86,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
                 R.id.save_menu_item -> {
                     getLocationPermission()
 
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         if (foregroundLocationPermissionGranted && foregroundAndBackgroundLocationPermissionGranted) {
                             Toast.makeText(context, "saved", Toast.LENGTH_SHORT).show()
                             requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -109,9 +110,6 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
                 else -> false
             }
         }
-
-
-
         return binding.root
     }
 
@@ -126,8 +124,34 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
 
         bottomSheetBehavior = BottomSheetBehavior.from(binding.addressBottomSheet)
 
-        if (mapsViewModel.selectedLocationAddress.value == null) {
+        // Hide bottom sheet when view created
+        if (mapsViewModel.selectedLocationAddressString.value == null) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        val mapsSearchAdapter = MapsSearchRecyclerAdapter(mapsViewModel, MapSearchClickListener { address ->
+            binding.mapsSearchView.hide()
+            mapsViewModel.setSelectedLocationLatLng(LatLng(address.latitude, address.longitude))
+            map.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(
+                        address.latitude,
+                        address.longitude
+                    ),
+                    DEFAULT_ZOOM.toFloat()
+                )
+            )
+        })
+        binding.mapsSearchRecyclerView.adapter = mapsSearchAdapter
+
+        // Add dividers to recycler view
+        val divider = MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+        divider.isLastItemDecorated = false
+        binding.mapsSearchRecyclerView.addItemDecoration(divider)
+
+        // Refresh recycler view as data changes
+        mapsViewModel.searchedAddresses.observe(viewLifecycleOwner) {
+            mapsSearchAdapter.submitAddressesList(it)
         }
     }
 
@@ -168,33 +192,36 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         }
 
         // Show bottom sheet with address
-        mapsViewModel.selectedLocationAddress.observe(viewLifecycleOwner) {
+        mapsViewModel.selectedLocationAddressString.observe(viewLifecycleOwner) {
             binding.addressTextBottomSheet.text = it
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
+        // Search when search ime button pressed in search view
         binding.mapsSearchView.editText.setOnEditorActionListener { textView, actionId, keyEvent ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
                 // Execute search
-                Toast.makeText(context, "search", Toast.LENGTH_SHORT).show()
-                searchLocation(binding.mapsSearchView.editText.text.toString())
+                mapsViewModel.searchAddresses(binding.mapsSearchView.editText.text.toString())
             }
+
             false
         }
-    }
 
-    private fun searchLocation(address: String) {
-        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+        // Clear addresses list when search view is hiding
+        binding.mapsSearchView.addTransitionListener { searchView, previousState, newState ->
+            if (newState == SearchView.TransitionState.HIDING) {
+                mapsViewModel.clearAddressesList()
+            }
+        }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            var addressList: MutableList<Address?>
-            geocoder.getFromLocationName(address, 5) {
-                addressList = it
-                if (addressList.size > 0) {
-                    for (oneAddress in addressList) {
-                        Log.i("MY TAG", oneAddress!!.getAddressLine(0))
-                    }
-                }
+        // Hide search view when back is pressed
+        requireActivity().onBackPressedDispatcher.addCallback {
+            if (binding.mapsSearchView.isShowing) {
+                this.isEnabled = true
+                binding.mapsSearchView.hide()
+            } else {
+                this.isEnabled = false
+                requireActivity().onBackPressedDispatcher.onBackPressed()
             }
         }
     }
@@ -254,6 +281,9 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         map.setOnMapClickListener { latLng ->
             mapsViewModel.setSelectedLocationLatLng(latLng)
         }
+        map.setOnMapLongClickListener { latLng ->
+            mapsViewModel.setSelectedLocationLatLng(latLng)
+        }
     }
 
 
@@ -301,7 +331,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     foregroundLocationPermissionGranted = true
                     getDeviceLocation()
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         if (ActivityCompat.checkSelfPermission(
                                 requireContext(),
                                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
@@ -354,7 +384,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
     }
 
     private fun checkBackgroundPermissionAndShowDialog() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (ActivityCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION
@@ -366,28 +396,6 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
             }
         }
     }
-
-
-//    private fun Geocoder.getAddress(
-//        latitude: Double,
-//        longitude: Double,
-//        address: (Address?) -> Unit
-//    ) {
-//
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-//            getFromLocation(latitude, longitude, 1) { address(it.firstOrNull()) }
-//            return
-//        }
-//
-//        try {
-//            address(getFromLocation(latitude, longitude, 1)?.firstOrNull())
-//        } catch(e: Exception) {
-//            //will catch if there is an internet problem
-//            view?.let { Snackbar.make(it,
-//                getString(R.string.internrt_access_problem), Snackbar.LENGTH_SHORT).show() }
-//            address(null)
-//        }
-//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -4,6 +4,7 @@ import android.app.Application
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -33,13 +34,25 @@ class MapsViewModel(app: Application): AndroidViewModel(app) {
     /**
      * Inner variable for selected location address string (where user places marker)
      */
-    private val _selectedLocationAddress = MutableLiveData<String?>()
+    private val _selectedLocationAddressString = MutableLiveData<String?>()
 
     /**
      * Outer variable for selected location address string (where user places marker)
      */
-    val selectedLocationAddress: LiveData<String?>
-        get() = _selectedLocationAddress
+    val selectedLocationAddressString: LiveData<String?>
+        get() = _selectedLocationAddressString
+
+    /**
+     * Inner variable for searched addresses list
+     */
+    private val _searchedAddresses = MutableLiveData<List<Address>>()
+
+    /**
+     * Outer variable for searched addresses list
+     */
+    val searchedAddresses: LiveData<List<Address>>
+        get() = _searchedAddresses
+
 
     /**
      * Method for setting selected location LatLng
@@ -54,7 +67,7 @@ class MapsViewModel(app: Application): AndroidViewModel(app) {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun setSelectedLocationAddress(address: String?) {
         viewModelScope.launch {
-            _selectedLocationAddress.postValue(address)
+            _selectedLocationAddressString.postValue(address)
         }
     }
 
@@ -83,7 +96,7 @@ class MapsViewModel(app: Application): AndroidViewModel(app) {
                         null
                     }
                 }
-                _selectedLocationAddress.value = generateAddressString(address,
+                _selectedLocationAddressString.value = generateAddressString(address,
                     _selectedLocationLatLng.value!!
                 )
             }
@@ -99,6 +112,46 @@ class MapsViewModel(app: Application): AndroidViewModel(app) {
         } else {
             "${latLng.latitude}; ${latLng.longitude}"
         }
+    }
+
+    /**
+     * Method for setting selected location address string (api 33)
+     */
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun setSearchedAddresses(addresses: List<Address>) {
+        viewModelScope.launch {
+            _searchedAddresses.postValue(addresses)
+        }
+    }
+
+    /**
+     * Gets addresses from search
+     */
+    fun searchAddresses(addressString: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            geocoder.getFromLocationName(addressString, 10) {
+                setSearchedAddresses(it)
+            }
+        } else {
+            viewModelScope.launch {
+                val addresses = withContext(Dispatchers.IO) {
+                    try {
+                        @Suppress("DEPRECATION")
+                        geocoder.getFromLocationName(addressString, 10) ?: emptyList<Address>()
+                    } catch (e: Exception) {
+                        emptyList<Address>()
+                    }
+                }
+                _searchedAddresses.value = addresses
+            }
+        }
+    }
+
+    /**
+     * Clear addresses list (when exit search view)
+     */
+    fun clearAddressesList() {
+        _searchedAddresses.value = emptyList()
     }
 
 }

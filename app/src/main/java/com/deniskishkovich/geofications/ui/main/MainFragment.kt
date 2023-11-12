@@ -61,11 +61,11 @@ class MainFragment : Fragment() {
         binding.notifList.adapter = myAdapter
 
         // Refresh recycler view as database changes
-        mainViewModel.geoficationList.observe(viewLifecycleOwner, Observer {
+        mainViewModel.geoficationList.observe(viewLifecycleOwner) {
             it?.let {
                 myAdapter.submitGeoficationList(it)
             }
-        })
+        }
 
         // Scroll to top of geofication list if new item added or item changed
         myAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -81,7 +81,7 @@ class MainFragment : Fragment() {
         })
 
         // Add an Observer on the state variable for Navigating.
-        mainViewModel.navigateToGeoficationDetails.observe(viewLifecycleOwner, Observer {
+        mainViewModel.navigateToGeoficationDetails.observe(viewLifecycleOwner) {
             it?.let {
                 val argAppBarTitle =
                     if (it == -1L) getString(R.string.add_notification) else getString(R.string.edit_notification)
@@ -94,7 +94,7 @@ class MainFragment : Fragment() {
                 )
                 mainViewModel.onGeoficationNavigated()
             }
-        })
+        }
 
         createChannel(
             getString(R.string.on_time_notification_channel_id),

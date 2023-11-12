@@ -13,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainRecyclerAdapter(val clickListener: GeoficationClickListener, private val viewModel: MainViewModel) :
+class MainRecyclerAdapter(private val clickListener: GeoficationClickListener, private val viewModel: MainViewModel) :
     ListAdapter<Geofication, MainRecyclerAdapter.ViewHolder>(GeoficationDiffCallback()) {
 
     private val adapterScope = CoroutineScope(Dispatchers.Default)
