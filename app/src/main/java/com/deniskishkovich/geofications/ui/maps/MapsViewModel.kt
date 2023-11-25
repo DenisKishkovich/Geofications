@@ -34,12 +34,12 @@ class MapsViewModel(app: Application): AndroidViewModel(app) {
     /**
      * Inner variable for selected location address string (where user places marker)
      */
-    private val _selectedLocationAddressString = MutableLiveData<String?>()
+    private val _selectedLocationAddressString = MutableLiveData<String>()
 
     /**
      * Outer variable for selected location address string (where user places marker)
      */
-    val selectedLocationAddressString: LiveData<String?>
+    val selectedLocationAddressString: LiveData<String>
         get() = _selectedLocationAddressString
 
     /**
@@ -57,7 +57,7 @@ class MapsViewModel(app: Application): AndroidViewModel(app) {
     /**
      * Method for setting selected location LatLng
      */
-    fun setSelectedLocationLatLng(latLng: LatLng?) {
+    fun setSelectedLocationLatLng(latLng: LatLng) {
         _selectedLocationLatLng.value = latLng
     }
 
@@ -65,7 +65,7 @@ class MapsViewModel(app: Application): AndroidViewModel(app) {
      * Method for setting selected location address string (api 33)
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun setSelectedLocationAddress(address: String?) {
+    private fun setSelectedLocationAddress(address: String) {
         viewModelScope.launch {
             _selectedLocationAddressString.postValue(address)
         }

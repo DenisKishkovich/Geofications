@@ -17,6 +17,7 @@ import com.deniskishkovich.geofications.R
 import com.deniskishkovich.geofications.cancelNotification
 import com.deniskishkovich.geofications.data.Geofication
 import com.deniskishkovich.geofications.data.GeoficationDao
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,7 +25,7 @@ import java.util.Calendar
 
 class GeoficationDetailsViewModel(
     private val database: GeoficationDao,
-    private var geoficationID: Long,
+    var geoficationID: Long,
     private val app: Application
 ) : AndroidViewModel(app) {
 
@@ -118,9 +119,6 @@ class GeoficationDetailsViewModel(
         get() = _toastText
 
     private val _dateTimeAlarmOn = MutableLiveData<Boolean>()
-    val isDateTimeAlarmOn: LiveData<Boolean>
-        get() = _dateTimeAlarmOn
-
 
     //Data for time selection dialog
     val hourForAlarm = MutableLiveData<Int?>()
@@ -132,6 +130,24 @@ class GeoficationDetailsViewModel(
     private val _dateTimeInMillisForAlarm = MutableLiveData<Long?>()
     val dateTimeInMillisForAlarm: LiveData<Long?>
         get() = _dateTimeInMillisForAlarm
+
+
+
+
+
+    // LatLng where to notify
+    private val _latLngWhereNotify = MutableLiveData<LatLng?>()
+    val latLngWhereNotify: LiveData<LatLng?>
+        get() = _latLngWhereNotify
+
+    // Location name
+    private val _locationString = MutableLiveData<String?>()
+    val locationString: LiveData<String?>
+        get() = _locationString
+
+    private val _isLocationNotificationOn = MutableLiveData<Boolean>()
+    val isLocationNotificationOn: LiveData<Boolean>
+        get() = _isLocationNotificationOn
 
     init {
         if (geoficationID == -1L) {
@@ -148,7 +164,7 @@ class GeoficationDetailsViewModel(
     }
 
     /**
-     * Method to get geof. from database by id
+     * Get geof. from database by id
      */
     private suspend fun getGeofication(geoficationId: Long): Geofication? =
         withContext(Dispatchers.IO) {
@@ -156,7 +172,7 @@ class GeoficationDetailsViewModel(
         }
 
     /**
-     * Method to get geof's params by id
+     * Get geof's params by id
      */
     private fun loadGeoficationParams(geoficationID: Long) {
         viewModelScope.launch {
@@ -174,6 +190,13 @@ class GeoficationDetailsViewModel(
                 _editedTimestamp.value = geofication.editedTimestamp
                 _dateTimeInMillisForAlarm.value = geofication.timestampToNotify
                 _dateTimeAlarmOn.value = geofication.isTimeNotificationSet
+
+                if (geofication.latitude != null && geofication.longitude != null) {
+                    _latLngWhereNotify.value = LatLng(geofication.latitude!!, geofication.longitude!!)
+                } else _latLngWhereNotify.value = null
+                _locationString.value = geofication.locationString
+                _isLocationNotificationOn.value = geofication.isLocationNotificationSet
+
             } else {
                 throw Exception("Geofication not found")
             }
@@ -189,6 +212,10 @@ class GeoficationDetailsViewModel(
         val currentIsCompleted = isCompleted.value
         val currentTimestampToNotify = _dateTimeInMillisForAlarm.value
         val currentDateTimeAlarmOn = _dateTimeAlarmOn.value ?: false
+        val currentLocationLatitude = _latLngWhereNotify.value?.latitude
+        val currentLocationLongitude = _latLngWhereNotify.value?.longitude
+        val currentLocationString = _locationString.value
+        val currentIsLocationNotificationOn = _isLocationNotificationOn.value ?: false
 
         // Null check
         if (currentTitle == null || currentDescription == null || currentIsCompleted == null) {
@@ -220,7 +247,11 @@ class GeoficationDetailsViewModel(
                     title = currentTitle,
                     description = currentDescription,
                     timestampToNotify = currentTimestampToNotify,
-                    isTimeNotificationSet = currentDateTimeAlarmOn
+                    isTimeNotificationSet = currentDateTimeAlarmOn,
+                    latitude = currentLocationLatitude,
+                    longitude = currentLocationLongitude,
+                    locationString = currentLocationString,
+                    isLocationNotificationSet = currentIsLocationNotificationOn
                 )
             )
 
@@ -235,7 +266,11 @@ class GeoficationDetailsViewModel(
                     currentCreatedTimestamp,
                     System.currentTimeMillis(), // Edited timestamp
                     currentTimestampToNotify,
-                    currentDateTimeAlarmOn
+                    currentDateTimeAlarmOn,
+                    currentLocationLatitude,
+                    currentLocationLongitude,
+                    currentLocationString,
+                    currentIsLocationNotificationOn
                 )
             )
         }
@@ -250,6 +285,9 @@ class GeoficationDetailsViewModel(
             geoficationID = database.insertGeofication(geofication)
             if (_dateTimeAlarmOn.value == true) {
                 startNotificationCountdown()
+            }
+            if (_isLocationNotificationOn.value == true) {
+                //TODO
             }
         }
     }
@@ -300,6 +338,9 @@ class GeoficationDetailsViewModel(
         if (!isNewGeofication) {
             if (_dateTimeAlarmOn.value == true) {
                 cancelDateTimeNotificationAndAlarm(createPendingIntentForDateTimeAlarm())
+            }
+            if (_isLocationNotificationOn.value == true) {
+                //TODO
             }
             viewModelScope.launch {
                 deleteGeoficationFromDb(geoficationID)
@@ -406,7 +447,7 @@ class GeoficationDetailsViewModel(
             viewModelScope.launch {
                 updateDateTimeAlarmInDb(
                     geoficationID,
-                    _dateTimeAlarmOn.value ?: false,
+                    _dateTimeAlarmOn.value ?: true,
                     _dateTimeInMillisForAlarm.value
                 )
             }
@@ -435,6 +476,55 @@ class GeoficationDetailsViewModel(
                     _dateTimeInMillisForAlarm.value
                 )
             }
+        }
+    }
+
+    /**
+     * Set latlng outside the view model
+     */
+    fun setLatLngWhereNotifyValue(latLng: LatLng) {
+        _latLngWhereNotify.value = latLng
+    }
+
+    /**
+     * Set location string outside the view model
+     */
+    fun setLocationStringValue(address: String) {
+        _locationString.value = address
+    }
+
+    fun cancelLocationNotification() {
+        _isLocationNotificationOn.value = false
+        _latLngWhereNotify.value = null
+        _locationString.value = null
+
+        if (!isNewGeofication) {
+            // TODO cancel notification and geofences
+
+            viewModelScope.launch {
+                updateLocationNotificationInDb(geoficationID, _latLngWhereNotify.value,
+                    _locationString.value, _isLocationNotificationOn.value ?: false)
+            }
+        }
+    }
+
+    fun updateLocationNotification(latLng: LatLng, address: String) {
+        _isLocationNotificationOn.value = true
+        _latLngWhereNotify.value = latLng
+        _locationString.value = address
+
+        if (!isNewGeofication) {
+            viewModelScope.launch {
+                updateLocationNotificationInDb(geoficationID, latLng, address, _isLocationNotificationOn.value ?: true)
+            }
+
+//            TODO start geofencing
+        }
+    }
+
+    private suspend fun updateLocationNotificationInDb(id: Long, latLng: LatLng?, address: String?, isSet: Boolean) {
+        withContext(Dispatchers.IO) {
+            database.updateLocationNotificationStatus(id, isSet, latLng?.latitude, latLng?.longitude, address)
         }
     }
 }

@@ -52,7 +52,7 @@ interface GeoficationDao {
     suspend fun updateCompleted(geoficationId: Long, isCompleted: Boolean)
 
     /**
-     * Update on date and time notification's params
+     * Update date and time notification's params
      */
     @Query("UPDATE geofications_table SET isTimeNotificationSet = :isTimeNotificationSet, timestampToNotify = :timeInMillis WHERE id = :geoficationId")
     suspend fun updateDateTimeNotificationStatus(
@@ -62,11 +62,23 @@ interface GeoficationDao {
     )
 
     /**
-     * Update on date and time notification's set status
+     * Update date and time notification's set status
      */
     @Query("UPDATE geofications_table SET isTimeNotificationSet = :isTimeNotificationSet WHERE id = :geoficationId")
     suspend fun updateIsTimeNotificationSetStatus(
         geoficationId: Long,
         isTimeNotificationSet: Boolean
+    )
+
+    /**
+     * Update location notification's params
+     */
+    @Query("UPDATE geofications_table SET isLocationNotificationSet = :isLocationNotificationSet, latitude_to_notify = :latitude, longitude_to_notify = :longitude, locationString = :locationString WHERE id = :geoficationId")
+    suspend fun updateLocationNotificationStatus(
+        geoficationId: Long,
+        isLocationNotificationSet: Boolean,
+        latitude: Double?,
+        longitude: Double?,
+        locationString: String?
     )
 }

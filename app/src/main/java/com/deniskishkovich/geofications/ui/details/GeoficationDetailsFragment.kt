@@ -69,13 +69,21 @@ class GeoficationDetailsFragment() : Fragment() {
 
         setToolbar(args.appbarTitle)
 
-        // Set date/time chip behavior
+        // Set chips behavior
         binding.datetimeChip.apply {
             setOnClickListener {
                 showTimeSelectionDialog()
             }
             setOnCloseIconClickListener {
                 geoficationDetailsViewModel.cancelDateTimeAlarm()
+            }
+        }
+        binding.locationChip.apply {
+            setOnClickListener {
+                showMapsDialog()
+            }
+            setOnCloseIconClickListener {
+                geoficationDetailsViewModel.cancelLocationNotification()
             }
         }
 
@@ -97,9 +105,9 @@ class GeoficationDetailsFragment() : Fragment() {
         }
 
         // Add an Observer on the state variable for toasts.
-        geoficationDetailsViewModel.toastText.observe(viewLifecycleOwner, Observer {
+        geoficationDetailsViewModel.toastText.observe(viewLifecycleOwner) {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-        })
+        }
 
         requestNotificationsPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {

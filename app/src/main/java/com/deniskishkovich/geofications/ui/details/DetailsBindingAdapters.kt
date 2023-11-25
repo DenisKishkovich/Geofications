@@ -57,3 +57,12 @@ fun setVisibility(chipView: Chip, dateTimeInMillisForAlarm: Long?) {
         chipView.visibility = View.VISIBLE
     }
 }
+
+@BindingAdapter("app:set_visibility")
+fun setVisibility(chipView: Chip, isNotificationSet: Boolean) {
+    if (!isNotificationSet) {
+        chipView.visibility = View.GONE
+    } else {
+        chipView.visibility = View.VISIBLE
+    }
+}

@@ -28,6 +28,9 @@ import com.deniskishkovich.geofications.R
 import com.deniskishkovich.geofications.databinding.FragmentMapsBinding
 import com.deniskishkovich.geofications.ui.details.GeoficationDetailsViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -41,6 +44,7 @@ import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.google.android.material.search.SearchView
 import com.google.android.material.snackbar.Snackbar
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 class MapsFragment : DialogFragment(), OnMapReadyCallback {
 
@@ -59,6 +63,8 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+
+    private lateinit var geofencingClient: GeofencingClient
 
     private var lastKnownLocation: Location? = null
 
@@ -86,9 +92,14 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
                 R.id.save_menu_item -> {
                     getLocationPermission()
 
+                    if (mapsViewModel.selectedLocationLatLng.value == null) {
+                        // TODO Snackbar ocation is not selected
+                        return@setOnMenuItemClickListener false
+                    }
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         if (foregroundLocationPermissionGranted && foregroundAndBackgroundLocationPermissionGranted) {
-                            Toast.makeText(context, "saved", Toast.LENGTH_SHORT).show()
+                            saveInGeofication()
                             requireActivity().onBackPressedDispatcher.onBackPressed()
                             true
                         } else {
@@ -96,7 +107,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
                         }
                     } else {
                         if (foregroundLocationPermissionGranted) {
-                            Toast.makeText(context, "saved", Toast.LENGTH_SHORT).show()
+                            saveInGeofication()
                             requireActivity().onBackPressedDispatcher.onBackPressed()
                             true
                         } else {
@@ -116,43 +127,22 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Client to find device's location
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        geofencingClient = LocationServices.getGeofencingClient(requireActivity())
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-        bottomSheetBehavior = BottomSheetBehavior.from(binding.addressBottomSheet)
-
         // Hide bottom sheet when view created
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.addressBottomSheet)
         if (mapsViewModel.selectedLocationAddressString.value == null) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        val mapsSearchAdapter = MapsSearchRecyclerAdapter(mapsViewModel, MapSearchClickListener { address ->
-            binding.mapsSearchView.hide()
-            mapsViewModel.setSelectedLocationLatLng(LatLng(address.latitude, address.longitude))
-            map.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    LatLng(
-                        address.latitude,
-                        address.longitude
-                    ),
-                    DEFAULT_ZOOM.toFloat()
-                )
-            )
-        })
-        binding.mapsSearchRecyclerView.adapter = mapsSearchAdapter
 
-        // Add dividers to recycler view
-        val divider = MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        divider.isLastItemDecorated = false
-        binding.mapsSearchRecyclerView.addItemDecoration(divider)
-
-        // Refresh recycler view as data changes
-        mapsViewModel.searchedAddresses.observe(viewLifecycleOwner) {
-            mapsSearchAdapter.submitAddressesList(it)
-        }
     }
 
     /**
@@ -176,7 +166,14 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         // Get the current location of the device and set the position of the map.
         getDeviceLocation()
 
+        // Set map click listeners
         setMapClick()
+
+        // Init search view
+        initSearch()
+
+        // If location is in database, select it
+        sharedViewModel.latLngWhereNotify.value?.let { mapsViewModel.setSelectedLocationLatLng(it) }
 
         // Create marker when selectedLocationLatLng in view model updates
         mapsViewModel.selectedLocationLatLng.observe(viewLifecycleOwner) {
@@ -197,33 +194,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
-        // Search when search ime button pressed in search view
-        binding.mapsSearchView.editText.setOnEditorActionListener { textView, actionId, keyEvent ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
-                // Execute search
-                mapsViewModel.searchAddresses(binding.mapsSearchView.editText.text.toString())
-            }
 
-            false
-        }
-
-        // Clear addresses list when search view is hiding
-        binding.mapsSearchView.addTransitionListener { searchView, previousState, newState ->
-            if (newState == SearchView.TransitionState.HIDING) {
-                mapsViewModel.clearAddressesList()
-            }
-        }
-
-        // Hide search view when back is pressed
-        requireActivity().onBackPressedDispatcher.addCallback {
-            if (binding.mapsSearchView.isShowing) {
-                this.isEnabled = true
-                binding.mapsSearchView.hide()
-            } else {
-                this.isEnabled = false
-                requireActivity().onBackPressedDispatcher.onBackPressed()
-            }
-        }
     }
 
     /**
@@ -348,6 +319,134 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
     }
 
     /**
+     * Pass data for geofence creation to Geofication Details View Model
+     */
+    private fun saveInGeofication() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (!foregroundLocationPermissionGranted || !foregroundAndBackgroundLocationPermissionGranted) {
+                return
+            }
+        } else {
+            if (foregroundLocationPermissionGranted) {
+                return
+            }
+        }
+
+        // Return if location is not selected or null
+        if (mapsViewModel.selectedLocationLatLng.value == null) {
+            return
+        }
+
+        sharedViewModel.updateLocationNotification(mapsViewModel.selectedLocationLatLng.value!!, mapsViewModel.selectedLocationAddressString.value ?: "")
+    }
+
+
+    private fun makeGeofence() {
+        // Return if permissions are not granted
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (!foregroundLocationPermissionGranted || !foregroundAndBackgroundLocationPermissionGranted) {
+                return
+            }
+        } else {
+            if (foregroundLocationPermissionGranted) {
+                return
+            }
+        }
+
+        // Return if location is not selected or null
+        if (mapsViewModel.selectedLocationLatLng.value == null) {
+            // TODO snackbar select location
+            return
+        }
+
+        // TODO delete geofence if exists or update it
+
+        val geofence = Geofence.Builder()
+            // Set the request ID of the geofence. This is a string to identify this
+            // geofence.
+            .setRequestId(sharedViewModel.geoficationID.toString())
+            // Set the circular region of this geofence.
+            .setCircularRegion(
+                mapsViewModel.selectedLocationLatLng.value!!.latitude,
+                mapsViewModel.selectedLocationLatLng.value!!.longitude,
+                GEOFENCE_RADIUS_IN_METERS)
+            // Set the expiration duration of the geofence. This geofence gets automatically
+            // removed after this period of time.
+            .setExpirationDuration(GEOFENCE_EXPIRATION_IN_MILLIS)
+            // Set the transition types of interest. Alerts are only generated for these
+            // transition.
+            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+            // Create the geofence.
+            .build()
+
+        val geofencingRequest = GeofencingRequest.Builder().apply {
+            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+            addGeofence(geofence)
+        }.build()
+
+    }
+
+    /**
+     * Init search view
+     */
+    private fun initSearch() {
+        // Init adapter
+        val mapsSearchAdapter = MapsSearchRecyclerAdapter(mapsViewModel, MapSearchClickListener { address ->
+            binding.mapsSearchView.hide()
+            mapsViewModel.setSelectedLocationLatLng(LatLng(address.latitude, address.longitude))
+            map.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(
+                        address.latitude,
+                        address.longitude
+                    ),
+                    DEFAULT_ZOOM.toFloat()
+                )
+            )
+        })
+        binding.mapsSearchRecyclerView.adapter = mapsSearchAdapter
+
+        // Add dividers to recycler view
+        val divider = MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+        divider.isLastItemDecorated = false
+        binding.mapsSearchRecyclerView.addItemDecoration(divider)
+
+        // Refresh recycler view as data changes
+        mapsViewModel.searchedAddresses.observe(viewLifecycleOwner) {
+            mapsSearchAdapter.submitAddressesList(it)
+        }
+
+
+        // Search when search ime button pressed in search view
+        binding.mapsSearchView.editText.setOnEditorActionListener { textView, actionId, keyEvent ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
+                // Execute search
+                mapsViewModel.searchAddresses(binding.mapsSearchView.editText.text.toString())
+            }
+
+            false
+        }
+
+        // Clear addresses list when search view is hiding
+        binding.mapsSearchView.addTransitionListener { searchView, previousState, newState ->
+            if (newState == SearchView.TransitionState.HIDING) {
+                mapsViewModel.clearAddressesList()
+            }
+        }
+
+        // Hide search view when back is pressed
+        requireActivity().onBackPressedDispatcher.addCallback {
+            if (binding.mapsSearchView.isShowing) {
+                this.isEnabled = true
+                binding.mapsSearchView.hide()
+            } else {
+                this.isEnabled = false
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
+        }
+    }
+
+    /**
      * Dialog which explains that background permission is needed
      */
     private fun showRequestBackgroundPermissionDialog() {
@@ -405,5 +504,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
     companion object {
         private const val DEFAULT_ZOOM = 15
         private const val REQUEST_FOREGROUND_PERMISSIONS_REQUEST_CODE = 1
+        private const val GEOFENCE_RADIUS_IN_METERS = 100f
+        private val GEOFENCE_EXPIRATION_IN_MILLIS: Long = TimeUnit.DAYS.toMillis(90)
     }
 }

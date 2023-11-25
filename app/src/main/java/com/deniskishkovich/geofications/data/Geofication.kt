@@ -29,7 +29,19 @@ data class Geofication(
     var timestampToNotify: Long? = null,
 
     @ColumnInfo
-    var isTimeNotificationSet: Boolean = false
+    var isTimeNotificationSet: Boolean = false,
+
+    @ColumnInfo(name = "latitude_to_notify")
+    var latitude: Double? = null,
+
+    @ColumnInfo(name = "longitude_to_notify")
+    var longitude: Double? = null,
+
+    @ColumnInfo
+    var locationString: String? = null,
+
+    @ColumnInfo
+    var isLocationNotificationSet: Boolean = false
 ) {
     val isEmpty
         get() = title.isEmpty() && description.isEmpty()
