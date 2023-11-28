@@ -24,6 +24,7 @@ class UpdateGeoficationJobService : JobService() {
 
     private val INTENT_ACTION_DATE_TIME = "datetime"
     private val INTENT_ACTION_COMPLETED = "completed"
+    private val INTENT_ACTION_LOCATION = "com.deniskishkovich.action.geofence"
 
     override fun onStartJob(jobParameters: JobParameters): Boolean {
         params = jobParameters
@@ -57,6 +58,16 @@ class UpdateGeoficationJobService : JobService() {
                 // True because database updates in background
                 return true
             }
+
+            INTENT_ACTION_LOCATION -> {
+                val isNotificationSet = jobParameters.extras.getBoolean("isNotificationSet")
+                // Updating the database
+                serviceScope.launch {
+                    updateLocationNotificationStatusInDb(dataSource, id, isNotificationSet)
+                }
+                // True because database updates in background
+                return true
+            }
             else -> return false
         }
     }
@@ -80,6 +91,14 @@ class UpdateGeoficationJobService : JobService() {
     private suspend fun updateIsCompletedInDb(data: GeoficationDao, id: Long, isCompleted: Boolean) {
         withContext(Dispatchers.IO) {
             data.updateCompleted(id, isCompleted)
+            // Notify the system when our work is finished, so that it can release the resources. It is used when "true" is returned from onStartJob
+            jobFinished(params, false)
+        }
+    }
+
+    private suspend fun updateLocationNotificationStatusInDb(data: GeoficationDao, id: Long, isLocationNotificationSet: Boolean) {
+        withContext(Dispatchers.IO) {
+            data.updateLocationNotificationStatus(id, isLocationNotificationSet, null, null, null)
             // Notify the system when our work is finished, so that it can release the resources. It is used when "true" is returned from onStartJob
             jobFinished(params, false)
         }

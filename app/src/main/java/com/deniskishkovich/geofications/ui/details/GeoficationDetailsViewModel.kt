@@ -1,11 +1,17 @@
 package com.deniskishkovich.geofications.ui.details
 
+import android.Manifest
 import android.app.AlarmManager
 import android.app.Application
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.app.AlarmManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
@@ -13,15 +19,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.deniskishkovich.geofications.AlarmReceiver
+import com.deniskishkovich.geofications.GeofenceBroadcastReceiver
 import com.deniskishkovich.geofications.R
 import com.deniskishkovich.geofications.cancelNotification
 import com.deniskishkovich.geofications.data.Geofication
 import com.deniskishkovich.geofications.data.GeoficationDao
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingRequest
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 class GeoficationDetailsViewModel(
     private val database: GeoficationDao,
@@ -31,13 +42,19 @@ class GeoficationDetailsViewModel(
 
     private val INTENT_ACTION_DATE_TIME = "datetime"
 
+    private val INTENT_ACTION_LOCATION = "com.deniskishkovich.action.geofence"
+
     private val alarmManager = app.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    private val geofencingClient = LocationServices.getGeofencingClient(app)
 
     var isNewGeofication: Boolean = false
 
     private var currentCreatedTimestamp: Long = 0L
 
     private val notifyAlarmIntent = Intent(app, AlarmReceiver::class.java)
+
+    private val notifyLocationIntent = Intent(app, GeofenceBroadcastReceiver::class.java)
 
     // Two-way data binding, exposing MutableLiveData
     val title = MutableLiveData<String>()
@@ -130,8 +147,6 @@ class GeoficationDetailsViewModel(
     private val _dateTimeInMillisForAlarm = MutableLiveData<Long?>()
     val dateTimeInMillisForAlarm: LiveData<Long?>
         get() = _dateTimeInMillisForAlarm
-
-
 
 
 
@@ -287,7 +302,7 @@ class GeoficationDetailsViewModel(
                 startNotificationCountdown()
             }
             if (_isLocationNotificationOn.value == true) {
-                //TODO
+                createGeofence()
             }
         }
     }
@@ -340,7 +355,7 @@ class GeoficationDetailsViewModel(
                 cancelDateTimeNotificationAndAlarm(createPendingIntentForDateTimeAlarm())
             }
             if (_isLocationNotificationOn.value == true) {
-                //TODO
+                cancelLocationNotificationAndGeofence()
             }
             viewModelScope.launch {
                 deleteGeoficationFromDb(geoficationID)
@@ -493,13 +508,19 @@ class GeoficationDetailsViewModel(
         _locationString.value = address
     }
 
-    fun cancelLocationNotification() {
+    fun cancelLocationNotificationAndGeofence() {
         _isLocationNotificationOn.value = false
         _latLngWhereNotify.value = null
         _locationString.value = null
 
         if (!isNewGeofication) {
-            // TODO cancel notification and geofences
+            val notificationManager = ContextCompat.getSystemService(
+                app,
+                NotificationManager::class.java
+            ) as NotificationManager
+            notificationManager.cancelNotification(geoficationID.toInt())
+
+            removeGeofence()
 
             viewModelScope.launch {
                 updateLocationNotificationInDb(geoficationID, _latLngWhereNotify.value,
@@ -518,13 +539,105 @@ class GeoficationDetailsViewModel(
                 updateLocationNotificationInDb(geoficationID, latLng, address, _isLocationNotificationOn.value ?: true)
             }
 
-//            TODO start geofencing
+            createGeofence()
         }
     }
 
     private suspend fun updateLocationNotificationInDb(id: Long, latLng: LatLng?, address: String?, isSet: Boolean) {
         withContext(Dispatchers.IO) {
             database.updateLocationNotificationStatus(id, isSet, latLng?.latitude, latLng?.longitude, address)
+        }
+    }
+
+    private fun createPendingIntentForGeofence(): PendingIntent {
+        notifyLocationIntent.apply {
+            action = INTENT_ACTION_LOCATION
+            putExtra("id", geoficationID)
+            putExtra("title", title.value)
+            putExtra("description", description.value)
+        }
+        return PendingIntent.getBroadcast(
+            getApplication(),
+            geoficationID.toInt(),
+            notifyLocationIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        )
+    }
+
+    private fun createGeofence() {
+        // Check permissions
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (ActivityCompat.checkSelfPermission(
+                    app,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(
+                    app,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
+        } else {
+            if (ActivityCompat.checkSelfPermission(
+                    app,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
+        }
+
+        // Return if location is not selected or null
+        if (!_isLocationNotificationOn.value!! || _latLngWhereNotify.value == null || _locationString.value == null) {
+            return
+        }
+
+        val geofence = Geofence.Builder()
+            // Set the request ID of the geofence. This is a string to identify this
+            // geofence.
+            .setRequestId(geoficationID.toString())
+            // Set the circular region of this geofence.
+            .setCircularRegion(
+                _latLngWhereNotify.value!!.latitude,
+                _latLngWhereNotify.value!!.longitude,
+                150f
+            )
+            // Set the expiration duration of the geofence. This geofence gets automatically
+            // removed after this period of time.
+            .setExpirationDuration(TimeUnit.DAYS.toMillis(30))
+            // Set the transition types of interest. Alerts are only generated for these
+            // transition.
+            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+            // Create the geofence.
+            .build()
+
+        val geofencingRequest = GeofencingRequest.Builder().apply {
+            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+            addGeofence(geofence)
+        }.build()
+
+        // Delete old geofence
+        removeGeofence()
+
+        // Create new geofence
+        geofencingClient.addGeofences(geofencingRequest, createPendingIntentForGeofence()).run {
+            addOnFailureListener {
+                cancelLocationNotificationAndGeofence()
+                Toast.makeText(app,
+                    app.getString(R.string.failed_to_set_a_reminder_for_location), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun removeGeofence() {
+        geofencingClient.removeGeofences(createPendingIntentForGeofence()).run {
+            addOnSuccessListener {
+                Log.i("GeoficationDetailsViewModel", "Geofence is removed")
+            }
+            addOnFailureListener {
+                Log.e("GeoficationDetailsViewModel", "Failed to remove the geofence")
+            }
         }
     }
 }

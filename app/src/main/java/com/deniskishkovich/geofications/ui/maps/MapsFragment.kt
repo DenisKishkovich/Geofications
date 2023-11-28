@@ -4,8 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
 import android.location.Location
 import android.net.Uri
 import android.os.Build
@@ -17,7 +15,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
@@ -28,9 +25,6 @@ import com.deniskishkovich.geofications.R
 import com.deniskishkovich.geofications.databinding.FragmentMapsBinding
 import com.deniskishkovich.geofications.ui.details.GeoficationDetailsViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.Geofence
-import com.google.android.gms.location.GeofencingClient
-import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -43,8 +37,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.google.android.material.search.SearchView
 import com.google.android.material.snackbar.Snackbar
-import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 class MapsFragment : DialogFragment(), OnMapReadyCallback {
 
@@ -63,8 +55,6 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-
-    private lateinit var geofencingClient: GeofencingClient
 
     private var lastKnownLocation: Location? = null
 
@@ -93,7 +83,8 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
                     getLocationPermission()
 
                     if (mapsViewModel.selectedLocationLatLng.value == null) {
-                        // TODO Snackbar ocation is not selected
+                        Snackbar.make(binding.root,
+                            getString(R.string.select_location_prompt), Snackbar.LENGTH_SHORT).show()
                         return@setOnMenuItemClickListener false
                     }
 
@@ -131,8 +122,6 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        geofencingClient = LocationServices.getGeofencingClient(requireActivity())
-
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
@@ -163,6 +152,11 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         // Prompt the user for permission.
         getLocationPermission()
 
+        // If location is in database, select it
+        sharedViewModel.latLngWhereNotify.value?.let {
+            mapsViewModel.setSelectedLocationLatLng(it)
+        }
+
         // Get the current location of the device and set the position of the map.
         getDeviceLocation()
 
@@ -171,9 +165,6 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
 
         // Init search view
         initSearch()
-
-        // If location is in database, select it
-        sharedViewModel.latLngWhereNotify.value?.let { mapsViewModel.setSelectedLocationLatLng(it) }
 
         // Create marker when selectedLocationLatLng in view model updates
         mapsViewModel.selectedLocationLatLng.observe(viewLifecycleOwner) {
@@ -340,52 +331,6 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         sharedViewModel.updateLocationNotification(mapsViewModel.selectedLocationLatLng.value!!, mapsViewModel.selectedLocationAddressString.value ?: "")
     }
 
-
-    private fun makeGeofence() {
-        // Return if permissions are not granted
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (!foregroundLocationPermissionGranted || !foregroundAndBackgroundLocationPermissionGranted) {
-                return
-            }
-        } else {
-            if (foregroundLocationPermissionGranted) {
-                return
-            }
-        }
-
-        // Return if location is not selected or null
-        if (mapsViewModel.selectedLocationLatLng.value == null) {
-            // TODO snackbar select location
-            return
-        }
-
-        // TODO delete geofence if exists or update it
-
-        val geofence = Geofence.Builder()
-            // Set the request ID of the geofence. This is a string to identify this
-            // geofence.
-            .setRequestId(sharedViewModel.geoficationID.toString())
-            // Set the circular region of this geofence.
-            .setCircularRegion(
-                mapsViewModel.selectedLocationLatLng.value!!.latitude,
-                mapsViewModel.selectedLocationLatLng.value!!.longitude,
-                GEOFENCE_RADIUS_IN_METERS)
-            // Set the expiration duration of the geofence. This geofence gets automatically
-            // removed after this period of time.
-            .setExpirationDuration(GEOFENCE_EXPIRATION_IN_MILLIS)
-            // Set the transition types of interest. Alerts are only generated for these
-            // transition.
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-            // Create the geofence.
-            .build()
-
-        val geofencingRequest = GeofencingRequest.Builder().apply {
-            setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-            addGeofence(geofence)
-        }.build()
-
-    }
-
     /**
      * Init search view
      */
@@ -504,7 +449,5 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
     companion object {
         private const val DEFAULT_ZOOM = 15
         private const val REQUEST_FOREGROUND_PERMISSIONS_REQUEST_CODE = 1
-        private const val GEOFENCE_RADIUS_IN_METERS = 100f
-        private val GEOFENCE_EXPIRATION_IN_MILLIS: Long = TimeUnit.DAYS.toMillis(90)
     }
 }

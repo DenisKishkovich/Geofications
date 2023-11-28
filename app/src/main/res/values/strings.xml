@@ -35,4 +35,6 @@
     <string name="settings">Settings</string>
     <string name="internrt_access_problem">Problem with internet access</string>
     <string name="hint_city_and_address">City and address</string>
+    <string name="select_location_prompt">Please select a location</string>
+    <string name="failed_to_set_a_reminder_for_location">Failed to set a reminder for location</string>
 </resources>
