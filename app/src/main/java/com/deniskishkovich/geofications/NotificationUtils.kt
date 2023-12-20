@@ -15,7 +15,7 @@ import com.deniskishkovich.geofications.R
  */
 fun NotificationManager.sendNotification(notificationId: Long = 0L, messageTitle: String = "Notification", messageBody: String = "", applicationContext: Context) {
 
-    val INTENT_ACTION_COMPLETED = "completed"
+    val INTENT_ACTION_COMPLETED = "com.deniskishkovich.action.completed"
 
     val appbarTitleArg = applicationContext.getString(R.string.edit_notification)
 

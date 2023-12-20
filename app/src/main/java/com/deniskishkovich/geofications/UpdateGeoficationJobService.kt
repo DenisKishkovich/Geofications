@@ -22,8 +22,8 @@ class UpdateGeoficationJobService : JobService() {
     private val supervisorJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.IO + supervisorJob)
 
-    private val INTENT_ACTION_DATE_TIME = "datetime"
-    private val INTENT_ACTION_COMPLETED = "completed"
+    private val INTENT_ACTION_DATE_TIME = "com.deniskishkovich.action.datetime"
+    private val INTENT_ACTION_COMPLETED = "com.deniskishkovich.action.completed"
     private val INTENT_ACTION_LOCATION = "com.deniskishkovich.action.geofence"
 
     override fun onStartJob(jobParameters: JobParameters): Boolean {

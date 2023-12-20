@@ -28,6 +28,8 @@ import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,7 +42,7 @@ class GeoficationDetailsViewModel(
     private val app: Application
 ) : AndroidViewModel(app) {
 
-    private val INTENT_ACTION_DATE_TIME = "datetime"
+    private val INTENT_ACTION_DATE_TIME = "com.deniskishkovich.action.datetime"
 
     private val INTENT_ACTION_LOCATION = "com.deniskishkovich.action.geofence"
 
@@ -492,20 +494,6 @@ class GeoficationDetailsViewModel(
                 )
             }
         }
-    }
-
-    /**
-     * Set latlng outside the view model
-     */
-    fun setLatLngWhereNotifyValue(latLng: LatLng) {
-        _latLngWhereNotify.value = latLng
-    }
-
-    /**
-     * Set location string outside the view model
-     */
-    fun setLocationStringValue(address: String) {
-        _locationString.value = address
     }
 
     fun cancelLocationNotificationAndGeofence() {

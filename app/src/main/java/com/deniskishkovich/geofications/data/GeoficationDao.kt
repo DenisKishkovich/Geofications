@@ -81,4 +81,10 @@ interface GeoficationDao {
         longitude: Double?,
         locationString: String?
     )
+
+    /**
+     * Select all geofications from table
+     */
+    @Query("SELECT * FROM geofications_table ORDER BY editedTimestamp DESC")
+    suspend fun getAllGeoficationsSuspend(): List<Geofication>
 }

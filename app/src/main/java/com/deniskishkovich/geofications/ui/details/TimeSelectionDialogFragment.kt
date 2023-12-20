@@ -60,6 +60,7 @@ class TimeSelectionDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         return dialogView
     }
 
@@ -96,7 +97,27 @@ class TimeSelectionDialogFragment : DialogFragment() {
      * Initialize timePicker
      */
     private fun initTimePicker(selectButton: Button) {
-        if (sharedViewModel.hourForAlarm.value != null && sharedViewModel.minuteForAlarm.value != null) {
+        if (sharedViewModel.hourForAlarm.value != null || sharedViewModel.minuteForAlarm.value != null) {
+            selectButton.text =
+                String.format(
+                    Locale.getDefault(),
+                    "%02d:%02d",
+                    sharedViewModel.hourForAlarm.value,
+                    sharedViewModel.minuteForAlarm.value
+                )
+        }
+
+        val timePickerDialog = MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_24H)
+            .setHour(sharedViewModel.hourForAlarm.value ?: 0)
+            .setMinute(sharedViewModel.minuteForAlarm.value ?: 0)
+            .setInputMode(INPUT_MODE_CLOCK)
+            .build()
+
+        timePickerDialog.addOnPositiveButtonClickListener {
+            sharedViewModel.hourForAlarm.value = timePickerDialog.hour
+            sharedViewModel.minuteForAlarm.value = timePickerDialog.minute
+
             selectButton.text =
                 String.format(
                     Locale.getDefault(),
@@ -107,27 +128,6 @@ class TimeSelectionDialogFragment : DialogFragment() {
         }
 
         selectButton.setOnClickListener {
-
-            val timePickerDialog = MaterialTimePicker.Builder()
-                .setTimeFormat(TimeFormat.CLOCK_24H)
-                .setHour(sharedViewModel.hourForAlarm.value ?: 0)
-                .setMinute(sharedViewModel.minuteForAlarm.value ?: 0)
-                .setInputMode(INPUT_MODE_CLOCK)
-                .build()
-
-            timePickerDialog.addOnPositiveButtonClickListener {
-                sharedViewModel.hourForAlarm.value = timePickerDialog.hour
-                sharedViewModel.minuteForAlarm.value = timePickerDialog.minute
-
-                selectButton.text =
-                    String.format(
-                        Locale.getDefault(),
-                        "%02d:%02d",
-                        sharedViewModel.hourForAlarm.value,
-                        sharedViewModel.minuteForAlarm.value
-                    )
-            }
-
             timePickerDialog.show(childFragmentManager, "details_fragment_time_picker")
         }
     }
