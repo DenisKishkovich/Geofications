@@ -83,8 +83,8 @@ interface GeoficationDao {
     )
 
     /**
-     * Select all geofications from table
+     * Select all geofications where notifications are planned from table
      */
-    @Query("SELECT * FROM geofications_table ORDER BY editedTimestamp DESC")
-    suspend fun getAllGeoficationsSuspend(): List<Geofication>
+    @Query("SELECT * FROM geofications_table WHERE isTimeNotificationSet = 1 OR isLocationNotificationSet = 1")
+    suspend fun getAllGeoficationsWhereNotifIsOn(): List<Geofication>
 }

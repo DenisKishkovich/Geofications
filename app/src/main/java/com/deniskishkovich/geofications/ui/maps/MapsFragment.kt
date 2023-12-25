@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import androidx.activity.addCallback
 import androidx.core.app.ActivityCompat
@@ -130,8 +131,6 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         if (mapsViewModel.selectedLocationAddressString.value == null) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
-
-
     }
 
     /**

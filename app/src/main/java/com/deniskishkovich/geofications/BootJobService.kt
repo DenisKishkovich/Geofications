@@ -69,7 +69,7 @@ class BootJobService: JobService() {
             val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             val geofencingClient = LocationServices.getGeofencingClient(applicationContext)
 
-            val geoficationList = dataSource.getAllGeoficationsSuspend()
+            val geoficationList = dataSource.getAllGeoficationsWhereNotifIsOn()
 
             for (geofication in geoficationList) {
                 if (geofication.isTimeNotificationSet) {
