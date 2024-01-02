@@ -27,7 +27,7 @@ class NotifyBottomSheetDialogFragment: BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = NotifyBottomSheetContentBinding.inflate(inflater, container, false)
 
         return binding.root

@@ -46,12 +46,12 @@ fun NotificationManager.sendNotification(notificationId: Long = 0L, messageTitle
         applicationContext,
         applicationContext.getString(R.string.on_time_notification_channel_id)
     )
-        .setSmallIcon(R.drawable.ic_launcher_foreground)
+        .setSmallIcon(R.mipmap.ic_launcher)
         .setContentTitle(messageTitle)
         .setContentIntent(contentPendingIntent)
         .setAutoCancel(true)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
-        .addAction(R.drawable.ic_launcher_foreground, "Completed", completedStatePendingIntent)
+        .addAction(R.mipmap.ic_launcher, "Completed", completedStatePendingIntent)
 
     if (messageBody.isNotEmpty()) {
         builder.setContentText(messageBody)
