@@ -82,14 +82,13 @@
                 android:layout_height="wrap_content"
                 android:checkable="false"
                 android:clickable="false"
-                app:chipIcon="@android:drawable/ic_dialog_map"
-                tools:text="Engelsa, 7, St. Petersburg, Russia"
-                android:maxWidth="170dp"
                 android:ellipsize="end"
+                android:maxWidth="170dp"
                 android:maxLines="1"
                 android:text="@{exactGeofication.locationString}"
+                app:chipIcon="@drawable/ic_location_on"
                 app:set_visibility="@{exactGeofication.locationNotificationSet}"
-                />
+                tools:text="Engelsa, 7, St. Petersburg, Russia" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/datetime_chip_main"
@@ -97,10 +96,10 @@
                 android:layout_height="wrap_content"
                 android:checkable="false"
                 android:clickable="false"
-                app:chipIcon="@android:drawable/ic_lock_idle_alarm"
-                tools:text="20/08/2023 10:23"
+                app:chipIcon="@drawable/ic_alarm"
                 app:set_timestamp_text="@{exactGeofication.timestampToNotify}"
-                app:set_visibility="@{exactGeofication.timestampToNotify}"/>
+                app:set_visibility="@{exactGeofication.timestampToNotify}"
+                tools:text="20/08/2023 10:23" />
 
         </com.google.android.material.chip.ChipGroup>
 

@@ -22,7 +22,7 @@
         android:padding="16dp"
         android:text="@string/bottom_dialog_option_time"
         android:textSize="20sp"
-        app:drawableStartCompat="@android:drawable/ic_popup_reminder"
+        app:drawableStartCompat="@drawable/ic_calendar_clock"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,15 +33,15 @@
         android:id="@+id/geo_selection_textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         android:drawablePadding="16dp"
         android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:padding="16dp"
         android:text="@string/bottom_dialog_option_location"
         android:textSize="20sp"
-        app:drawableStartCompat="@android:drawable/ic_dialog_map"
+        app:drawableStartCompat="@drawable/ic_add_location"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/time_selection_textView"
-        tools:text="Set a reminder by location"/>
+        tools:text="Set a reminder by location" />
 </androidx.constraintlayout.widget.ConstraintLayout>

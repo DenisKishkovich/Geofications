@@ -131,15 +131,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:checkable="false"
-                app:checkedIconVisible="true"
-                app:chipIcon="@android:drawable/ic_dialog_map"
-                app:closeIconVisible="true"
-                android:text="@{viewModel.locationString}"
-                tools:text="Engelsa, 7, St. Petersburg, Russia"
-                android:maxWidth="250dp"
                 android:ellipsize="end"
+                android:maxWidth="250dp"
                 android:maxLines="1"
-                app:set_visibility="@{viewModel.isLocationNotificationOn}"/>
+                android:text="@{viewModel.locationString}"
+                app:checkedIconVisible="true"
+                app:chipIcon="@drawable/ic_location_on"
+                app:closeIconVisible="true"
+                app:set_visibility="@{viewModel.isLocationNotificationOn}"
+                tools:text="Engelsa, 7, St. Petersburg, Russia" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/datetime_chip"
@@ -147,7 +147,7 @@
                 android:layout_height="wrap_content"
                 android:checkable="false"
                 app:checkedIconVisible="true"
-                app:chipIcon="@android:drawable/ic_lock_idle_alarm"
+                app:chipIcon="@drawable/ic_alarm"
                 app:closeIconVisible="true"
                 app:set_timestamp_text="@{viewModel.dateTimeInMillisForAlarm}"
                 app:set_visibility="@{viewModel.dateTimeInMillisForAlarm}"
@@ -158,12 +158,12 @@
             android:id="@+id/DetailsFab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:contentDescription="@string/fab_description_add_geofication"
             android:onClick="@{() -> viewModel.saveGeofication()}"
-            android:src="?android:attr/textCheckMark"
-            android:layout_gravity="bottom|end" />
+            android:src="@drawable/ic_done" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </FrameLayout>
