@@ -8,7 +8,7 @@
     <string name="empty_notif_deleted">Empty notification deleted</string>
     <string name="delete">Delete</string>
     <string name="create_notification">Create notification</string>
-    <string name="delete_all_notifications">Delete all</string>
+    <string name="delete_all_completed_notifications">Delete completed</string>
     <string name="notif_empty">Notification cannot be empty</string>
 
     <string name="on_time_notification_channel_id">on_time_channel</string>

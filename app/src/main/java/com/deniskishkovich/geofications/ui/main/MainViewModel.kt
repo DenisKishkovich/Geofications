@@ -30,9 +30,9 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
     val navigateToGeoficationDetails
         get() = _navigateToGeoficationDetails
 
-    private suspend fun clearAll() {
+    private suspend fun deleteCompletedFromDb() {
         withContext(Dispatchers.IO) {
-            database.deleteAllGeofications()
+            database.deleteCompletedGeofications()
         }
     }
 
@@ -55,11 +55,11 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
     }
 
     /**
-     * Clear geofication database
+     * Delete completed geofications
      */
-    fun onClear() {
+    fun deleteCompleted() {
         viewModelScope.launch {
-            clearAll()
+            deleteCompletedFromDb()
         }
     }
 

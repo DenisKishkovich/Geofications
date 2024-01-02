@@ -18,6 +18,5 @@ class MainActivity : AppCompatActivity() {
       TODO 2. check alarmManager if device restarts
       TODO 3. adjust style material3
       TODO 4. подсказка ничего не найдено, если в поиске не нашлось, снекбары для поиска
-      TODO 5 keyboard bug in map
     */
 }

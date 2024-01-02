@@ -245,6 +245,10 @@ class GeoficationDetailsFragment() : Fragment() {
      * Dialog for selecting the type of reminder (on time or on location)
      */
     private fun showNotifyBottomSheetDialog() {
+
+        // Clear focus from edit text, for not making keyboard appear again
+        binding.title.clearFocus()
+
         val notifyBottomSheetDialogFragment = NotifyBottomSheetDialogFragment()
         notifyBottomSheetDialogFragment.show(childFragmentManager, "NotifyBottomSheetDialog")
     }

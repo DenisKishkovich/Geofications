@@ -68,6 +68,42 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/description_textView">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/location_chip_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkable="false"
+                android:clickable="false"
+                app:chipIcon="@android:drawable/ic_dialog_map"
+                tools:text="Engelsa, 7, St. Petersburg, Russia"
+                android:maxWidth="170dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{exactGeofication.locationString}"
+                app:set_visibility="@{exactGeofication.locationNotificationSet}"
+                />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/datetime_chip_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checkable="false"
+                android:clickable="false"
+                app:chipIcon="@android:drawable/ic_lock_idle_alarm"
+                tools:text="20/08/2023 10:23"
+                app:set_timestamp_text="@{exactGeofication.timestampToNotify}"
+                app:set_visibility="@{exactGeofication.timestampToNotify}"/>
+
+        </com.google.android.material.chip.ChipGroup>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
