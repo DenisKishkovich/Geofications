@@ -27,7 +27,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/drag_handle"
-        tools:text="Set a reminder by time" />
+        tools:text="Set a reminder by time"/>
 
     <TextView
         android:id="@+id/geo_selection_textView"

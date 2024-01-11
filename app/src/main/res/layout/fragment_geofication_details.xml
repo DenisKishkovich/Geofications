@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -11,160 +11,166 @@
     </data>
 
     <FrameLayout
+        android:id="@+id/details_maps_dialog_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/details_maps_dialog_container">
+        android:layout_height="match_parent">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/details_coordinator_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/details_coordinator_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/editText_container"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:fitsSystemWindows="true">
 
-            <CheckBox
-                android:id="@+id/checkBoxInDetails"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:checked="@={viewModel.isCompleted}"
-                android:text="@string/completed_text"
-                android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:set_visibility="@{viewModel.isNewGeofication}"/>
-
-            <TextView
-                android:id="@+id/edited_timestamp_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/checkBoxInDetails"
-                app:set_timestamp_text="@{viewModel.editedTimestamp}"
-                tools:text="12/08/2023 10:23"
-                app:set_visibility="@{viewModel.isNewGeofication}"/>
-
-            <EditText
-                android:id="@+id/title"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/editText_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@android:color/transparent"
-                android:hint="@string/notification_text"
-                android:importantForAutofill="no"
-                android:inputType="textMultiLine|textCapSentences"
-                android:maxLength="30"
-                android:maxLines="3"
-                android:paddingStart="16dp"
-                android:paddingTop="4dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="4dp"
-                android:scrollHorizontally="false"
-                android:text="@={viewModel.title}"
-                android:textSize="30sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edited_timestamp_text"
-                tools:text="Title" />
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <ScrollView
-                android:id="@+id/scrollView2"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/title">
+                <CheckBox
+                    android:id="@+id/checkBoxInDetails"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:checked="@={viewModel.isCompleted}"
+                    android:text="@string/completed_text"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:set_visibility="@{viewModel.isNewGeofication}" />
+
+                <TextView
+                    android:id="@+id/edited_timestamp_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:textColor="?attr/colorOnSurface"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/checkBoxInDetails"
+                    app:set_timestamp_text="@{viewModel.editedTimestamp}"
+                    app:set_visibility="@{viewModel.isNewGeofication}"
+                    tools:text="12/08/2023 10:23" />
 
                 <EditText
-                    android:id="@+id/description"
+                    android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:background="@android:color/transparent"
-                    android:gravity="top"
-                    android:hint="@string/description"
+                    android:hint="@string/notification_text"
                     android:importantForAutofill="no"
                     android:inputType="textMultiLine|textCapSentences"
+                    android:maxLength="30"
+                    android:maxLines="3"
                     android:paddingStart="16dp"
-                    android:paddingTop="8dp"
+                    android:paddingTop="4dp"
                     android:paddingEnd="16dp"
-                    android:paddingBottom="92dp"
-                    android:text="@={viewModel.description}"
-                    android:textSize="20sp"
-                    tools:text="This is description multiline text for edit text" />
-            </ScrollView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:paddingBottom="4dp"
+                    android:scrollHorizontally="false"
+                    android:text="@={viewModel.title}"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textColorHint="?attr/colorOnSurfaceVariant"
+                    android:textSize="30sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edited_timestamp_text"
+                    tools:text="Title" />
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                <ScrollView
+                    android:id="@+id/scrollView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/title">
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/details_fragment_toolbar"
+                    <EditText
+                        android:id="@+id/description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:gravity="top"
+                        android:hint="@string/description"
+                        android:importantForAutofill="no"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:paddingStart="16dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="92dp"
+                        android:text="@={viewModel.description}"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textColorHint="?attr/colorOnSurfaceVariant"
+                        android:textSize="20sp"
+                        tools:text="This is description multiline text for edit text" />
+                </ScrollView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="?attr/actionBarSize"
-                app:menu="@menu/details_fragment_menu"
-                app:titleTextAppearance="?attr/textAppearanceTitleLarge"
-                app:navigationIcon="?attr/homeAsUpIndicator"/>
+                android:layout_height="wrap_content">
 
-        </com.google.android.material.appbar.AppBarLayout>
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/details_fragment_toolbar"
+                    style="@style/Widget.Material3.Toolbar.OnSurface"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="?attr/actionBarSize"
+                    app:menu="@menu/details_fragment_menu"
+                    app:navigationIcon="?attr/homeAsUpIndicator" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
-            android:orientation="vertical"
-            android:layout_margin="8dp">
+            </com.google.android.material.appbar.AppBarLayout>
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/location_chip"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:checkable="false"
-                android:ellipsize="end"
-                android:maxWidth="250dp"
-                android:maxLines="1"
-                android:text="@{viewModel.locationString}"
-                app:checkedIconVisible="true"
-                app:chipIcon="@drawable/ic_location_on"
-                app:closeIconVisible="true"
-                app:set_visibility="@{viewModel.isLocationNotificationOn}"
-                tools:text="Engelsa, 7, St. Petersburg, Russia" />
+                android:layout_gravity="bottom|start"
+                android:layout_margin="8dp"
+                android:orientation="vertical">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/datetime_chip"
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/location_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:checkable="false"
+                    android:ellipsize="end"
+                    android:maxWidth="250dp"
+                    android:maxLines="1"
+                    android:text="@{viewModel.locationString}"
+                    app:checkedIconVisible="true"
+                    app:chipIcon="@drawable/ic_location_on"
+                    app:closeIconVisible="true"
+                    app:set_visibility="@{viewModel.isLocationNotificationOn}"
+                    tools:text="Engelsa, 7, St. Petersburg, Russia" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/datetime_chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="false"
+                    app:checkedIconVisible="true"
+                    app:chipIcon="@drawable/ic_alarm"
+                    app:closeIconVisible="true"
+                    app:set_timestamp_text="@{viewModel.dateTimeInMillisForAlarm}"
+                    app:set_visibility="@{viewModel.dateTimeInMillisForAlarm}"
+                    tools:text="20/08/2023 10:23" />
+            </LinearLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/DetailsFab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checkable="false"
-                app:checkedIconVisible="true"
-                app:chipIcon="@drawable/ic_alarm"
-                app:closeIconVisible="true"
-                app:set_timestamp_text="@{viewModel.dateTimeInMillisForAlarm}"
-                app:set_visibility="@{viewModel.dateTimeInMillisForAlarm}"
-                tools:text="20/08/2023 10:23" />
-        </LinearLayout>
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:contentDescription="@string/fab_description_add_geofication"
+                android:onClick="@{() -> viewModel.saveGeofication()}"
+                android:src="@drawable/ic_done" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/DetailsFab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="@string/fab_description_add_geofication"
-            android:onClick="@{() -> viewModel.saveGeofication()}"
-            android:src="@drawable/ic_done" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </FrameLayout>
 </layout>

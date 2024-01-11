@@ -12,7 +12,7 @@
     <string name="notif_empty">Notification cannot be empty</string>
 
     <string name="on_time_notification_channel_id">on_time_channel</string>
-    <string name="on_time_notification_channel_name">On Time</string>
+    <string name="on_time_notification_channel_name">Reminders</string>
     <string name="add_notification">Add notification</string>
     <string name="edit_notification">Edit notification</string>
     <string name="time_less_than_current">Reminder time is less than current time!</string>
@@ -37,4 +37,7 @@
     <string name="hint_city_and_address">City and address</string>
     <string name="select_location_prompt">Please select a location</string>
     <string name="failed_to_set_a_reminder_for_location">Failed to set a reminder for location</string>
+    <string name="deleted">Deleted</string>
+    <string name="undo">Undo</string>
+    <string name="notif_chanel_description">On time and location reminders\' notifications</string>
 </resources>

@@ -64,6 +64,45 @@ class MainViewModel(val database: GeoficationDao, application: Application) :
     }
 
     /**
+     * Delete geofication on swiped
+     */
+    fun swipeDeleteGeofication(geoficationId: Long) {
+        if (geoficationId < 1) {
+            return
+        }
+        viewModelScope.launch {
+            deleteGeoficationFromDb(geoficationId)
+        }
+    }
+
+    /**
+     * Delete geofication from database by id
+     */
+    private suspend fun deleteGeoficationFromDb(geoficationId: Long) {
+        withContext(Dispatchers.IO) {
+            database.deleteGeoficationById(geoficationId)
+        }
+    }
+
+    /**
+     * Return deleted by swipe geofication to database
+     */
+    fun undoDeleteGeofication(geofication: Geofication) {
+        viewModelScope.launch {
+            insertGeofication(geofication)
+        }
+    }
+
+    /**
+     * Insert geofication into database
+     */
+    private suspend fun insertGeofication(geofication: Geofication) {
+        withContext(Dispatchers.IO) {
+            database.insertGeofication(geofication)
+        }
+    }
+
+    /**
      * Here goes Geofication id from recycler view adapter's click listener
      */
     fun onGeoficationClicked(id: Long) {

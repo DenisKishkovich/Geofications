@@ -2,17 +2,13 @@ package com.deniskishkovich.geofications.ui.details
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import com.deniskishkovich.geofications.R
 import com.deniskishkovich.geofications.databinding.NotifyBottomSheetContentBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import javax.security.auth.callback.Callback
 
 class NotifyBottomSheetDialogFragment: BottomSheetDialogFragment() {
 

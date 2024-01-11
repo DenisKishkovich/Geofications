@@ -52,9 +52,9 @@
                 android:layout_height="wrap_content"
                 android:minHeight="?attr/actionBarSize"
                 app:menu="@menu/maps_dialog_fragment_toolbar"
-                app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
+                app:navigationIcon="@drawable/ic_close"
                 app:title="@string/title_select_location"
-                app:titleTextAppearance="?attr/textAppearanceTitleLarge" />
+                style="@style/Widget.Material3.Toolbar.OnSurface"/>
 
         </com.google.android.material.appbar.AppBarLayout>
 

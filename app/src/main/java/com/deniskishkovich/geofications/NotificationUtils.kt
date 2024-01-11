@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.navigation.NavDeepLinkBuilder
-import com.deniskishkovich.geofications.R
 
 // Extension function to send messages
 /**

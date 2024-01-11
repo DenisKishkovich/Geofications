@@ -33,10 +33,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="?attr/actionBarSize"
-                app:title="@string/app_name"
                 app:menu="@menu/main_fragment_menu"
-                app:titleTextAppearance="?attr/textAppearanceTitleLarge"
-                app:titleCentered="true"/>
+                app:title="@string/app_name"
+                app:titleCentered="true"
+                style="@style/Widget.Material3.Toolbar.OnSurface"/>
 
         </com.google.android.material.appbar.AppBarLayout>
 

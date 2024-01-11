@@ -11,22 +11,28 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.deniskishkovich.geofications.GeoficationClickListener
 import com.deniskishkovich.geofications.MainRecyclerAdapter
 import com.deniskishkovich.geofications.R
 import com.deniskishkovich.geofications.data.GeoficationDatabase
 import com.deniskishkovich.geofications.databinding.FragmentMainBinding
+import com.google.android.material.snackbar.Snackbar
 
 class MainFragment : Fragment() {
 
     private lateinit var mainViewModel: MainViewModel
 
+    private lateinit var binding: FragmentMainBinding
+
+    private lateinit var myAdapter: MainRecyclerAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding: FragmentMainBinding =
+        binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
 
         val application = requireNotNull(this.activity).application
@@ -52,10 +58,11 @@ class MainFragment : Fragment() {
             }}
 
         // Creating an adapter with click listener. Once is clicked, id is handled to onGeoficationClicked method of viewModel
-        val myAdapter = MainRecyclerAdapter(GeoficationClickListener { geoficationID ->
+        myAdapter = MainRecyclerAdapter(GeoficationClickListener { geoficationID ->
             mainViewModel.onGeoficationClicked(geoficationID)
         }, mainViewModel)
         binding.notifList.adapter = myAdapter
+        setSwipeToDelete()
 
         // Refresh recycler view as database changes
         mainViewModel.geoficationList.observe(viewLifecycleOwner) {
@@ -101,6 +108,41 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+    private fun setSwipeToDelete() {
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                if (mainViewModel.geoficationList.value == null) {
+                    return
+                }
+
+                val geoficationId: Long = viewHolder.itemView.tag as Long
+
+                // Get geofication to delete
+                val deletedGeofication = mainViewModel.geoficationList.value!!.find { geofication -> geoficationId == geofication.id }
+                    ?: return
+
+                mainViewModel.swipeDeleteGeofication(deletedGeofication.id)
+
+                Snackbar.make(binding.notifList, getString(R.string.deleted), Snackbar.LENGTH_LONG)
+                    .setAction(
+                        getString(R.string.undo)
+                    ) {
+                        mainViewModel.undoDeleteGeofication(deletedGeofication)
+                    }
+                    .show()
+            }
+
+        }).attachToRecyclerView(binding.notifList)
+    }
+
     private fun createChannel(channelId: String, channelName: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(
@@ -110,7 +152,7 @@ class MainFragment : Fragment() {
             )
             notificationChannel.enableVibration(true)
             notificationChannel.description =
-                "Notification on selected time"  //TODO correct description
+                getString(R.string.notif_chanel_description)
 
             val notificationManager =
                 requireActivity().getSystemService(NotificationManager::class.java)

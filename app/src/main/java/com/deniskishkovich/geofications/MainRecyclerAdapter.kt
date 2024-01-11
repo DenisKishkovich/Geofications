@@ -25,6 +25,7 @@ class MainRecyclerAdapter(private val clickListener: GeoficationClickListener, p
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         holder.bind(item, clickListener, viewModel)
+        holder.itemView.tag = item.id
     }
 
     // Needed to refresh list

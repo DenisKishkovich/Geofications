@@ -35,6 +35,7 @@
             android:maxLines="3"
             android:textSize="22sp"
             tools:text="4, Rudneva, St. Petersburg"
+            android:textColor="?attr/colorOnSurface"
             android:text="@{exactAddress.getAddressLine(0)}"/>
     </LinearLayout>
 </layout>
