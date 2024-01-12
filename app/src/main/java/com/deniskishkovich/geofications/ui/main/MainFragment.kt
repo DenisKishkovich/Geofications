@@ -2,11 +2,24 @@ package com.deniskishkovich.geofications.ui.main
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.drawable.ClipDrawable
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -62,6 +75,8 @@ class MainFragment : Fragment() {
             mainViewModel.onGeoficationClicked(geoficationID)
         }, mainViewModel)
         binding.notifList.adapter = myAdapter
+
+        // Set swipe to delete behavior to items
         setSwipeToDelete()
 
         // Refresh recycler view as database changes
@@ -108,6 +123,9 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * Sets swipe to delete behavior to items of recycler view
+     */
     private fun setSwipeToDelete() {
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
@@ -140,6 +158,76 @@ class MainFragment : Fragment() {
                     .show()
             }
 
+            override fun onChildDraw(
+                canvas: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                val deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete) ?: return
+                val iconInnerWidth = deleteIcon.intrinsicWidth
+                val iconInnerHeight = deleteIcon.intrinsicHeight
+                val itemView = viewHolder.itemView
+                val itemHeight = itemView.height
+                val background = ColorDrawable()
+                val backgroundColor = ContextCompat.getColor(requireContext(), R.color.md_theme_light_error)
+                val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
+                val isCanceled = dX == 0f && !isCurrentlyActive
+                val clip = ClipDrawable(deleteIcon, Gravity.END, ClipDrawable.HORIZONTAL)
+
+                // Set color of delete icon
+                deleteIcon.setTint(ContextCompat.getColor(requireContext(), R.color.md_theme_light_onError))
+
+                if (isCanceled) {
+                    canvas.drawRect(itemView.right + dX, itemView.top.toFloat(), itemView.right.toFloat(), itemView.bottom.toFloat(), clearPaint)
+                    super.onChildDraw(
+                        canvas,
+                        recyclerView,
+                        viewHolder,
+                        dX,
+                        dY,
+                        actionState,
+                        isCurrentlyActive
+                    )
+                    return
+                }
+
+                // Draw the red delete background
+                background.color = backgroundColor
+                background.setBounds(
+                    itemView.right + dX.toInt(),
+                    itemView.top,
+                    itemView.right,
+                    itemView.bottom
+                )
+                background.draw(canvas)
+
+                // Calculate position of delete icon
+                val deleteIconTop = itemView.top + (itemHeight - iconInnerHeight) / 2
+                val deleteIconMargin = (itemHeight - iconInnerHeight) / 2
+                val deleteIconLeft = itemView.right - deleteIconMargin - iconInnerWidth
+                val deleteIconRight = itemView.right - deleteIconMargin
+                val deleteIconBottom = deleteIconTop + iconInnerHeight
+
+                // Draw the delete icon
+                deleteIcon.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
+                clip.level = (-dX.toInt() - deleteIconMargin) * 10000 / deleteIcon.intrinsicWidth
+                clip.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
+                clip.draw(canvas)
+
+                super.onChildDraw(
+                    canvas,
+                    recyclerView,
+                    viewHolder,
+                    dX,
+                    dY,
+                    actionState,
+                    isCurrentlyActive
+                )
+            }
         }).attachToRecyclerView(binding.notifList)
     }
 
