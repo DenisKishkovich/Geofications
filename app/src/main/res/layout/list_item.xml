@@ -21,13 +21,14 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/list_item_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{() -> clickListener.onClick(exactGeofication)}"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="16dp">
+        android:paddingStart="8dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="8dp"
+        android:foreground="?attr/selectableItemBackgroundBorderless">
 
         <TextView
             android:id="@+id/title_textView"
@@ -86,7 +87,7 @@
                 android:checkable="false"
                 android:clickable="false"
                 android:ellipsize="end"
-                android:maxWidth="170dp"
+                android:maxWidth="150dp"
                 android:maxLines="1"
                 android:text="@{exactGeofication.locationString}"
                 app:chipIcon="@drawable/ic_location_on"
