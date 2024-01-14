@@ -38,6 +38,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.google.android.material.search.SearchView
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialSharedAxis
 
 class MapsFragment : DialogFragment(), OnMapReadyCallback {
 
@@ -65,6 +66,17 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
 
     private var foregroundAndBackgroundLocationPermissionGranted = false
     private var foregroundLocationPermissionGranted = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Set animations
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, /* forward= */ true).apply {
+            duration = 750
+            secondaryAnimatorProvider = null
+        }
+
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, /* forward= */ false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
