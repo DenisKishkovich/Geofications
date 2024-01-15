@@ -274,7 +274,7 @@ class MainFragment : Fragment() {
 
     private fun showInfoDialog() {
         MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog__Center)
-            .setTitle("Please pay attention")
+            .setTitle(getString(R.string.important_information))
             .setMessage(getString(R.string.help_battery))
             .setIcon(R.drawable.ic_help)
             .setNegativeButton(getString(R.string.settings)) { dialog, _ ->

@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Geofications</string>
-    <string name="fab_description_add_geofication">Add notification</string>
+    <string name="fab_description_add_geofication">Add reminder</string>
     <string name="completed_text">Completed</string>
-    <string name="notification_text">Notification</string>
+    <string name="notification_text">What to notify about?</string>
     <string name="description">Description</string>
     <string name="notification_deleted">Deleted</string>
     <string name="empty_notif_deleted">Empty notification deleted</string>
@@ -11,7 +11,7 @@
     <string name="delete_all_completed_notifications">Delete completed</string>
     <string name="notif_empty">Notification cannot be empty</string>
 
-    <string name="on_time_notification_channel_id">on_time_channel</string>
+    <string name="on_time_notification_channel_id" translatable="false">on_time_channel</string>
     <string name="on_time_notification_channel_name">Reminders</string>
     <string name="add_notification">Add notification</string>
     <string name="edit_notification">Edit notification</string>
@@ -43,7 +43,8 @@
     <string name="ok">OK</string>
     <string name="help_battery">For proper work of notifications, the application needs permission to run in the background and auto-launch.</string>
     <string name="info">Info</string>
-    <string name="no_reminders_image_content_description">There are no reminders image</string>
+    <string name="no_reminders_image_content_description">\"There are no reminders\" image</string>
     <string name="no_reminders_text">No reminders here\nCreate one!</string>
     <string name="all_reminders_title">All reminders</string>
+    <string name="important_information">Important information</string>
 </resources>

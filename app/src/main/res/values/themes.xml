@@ -44,6 +44,6 @@
     </style>
 
     <style name="ExpandedAppBar" parent="@style/TextAppearance.Material3.HeadlineLarge">
-        <item name="android:textSize">40sp</item>
+        <item name="android:textSize">36sp</item>
     </style>
 </resources>
