@@ -2,14 +2,17 @@ package com.deniskishkovich.geofications.ui.main
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.drawable.ClipDrawable
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -21,11 +24,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.deniskishkovich.geofications.GeoficationClickListener
-import com.deniskishkovich.geofications.MainRecyclerAdapter
+import com.deniskishkovich.geofications.BuildConfig
 import com.deniskishkovich.geofications.R
 import com.deniskishkovich.geofications.data.GeoficationDatabase
 import com.deniskishkovich.geofications.databinding.FragmentMainBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
 
@@ -75,6 +78,10 @@ class MainFragment : Fragment() {
                     mainViewModel.deleteCompleted()
                     true
                 }
+                R.id.info_menu_item -> {
+                    showInfoDialog()
+                    true
+                }
                 else -> false
             }}
 
@@ -91,7 +98,15 @@ class MainFragment : Fragment() {
         mainViewModel.geoficationList.observe(viewLifecycleOwner) {
             it?.let {
                 myAdapter.submitGeoficationList(it)
+                if (it.isEmpty()) {
+                    binding.nothingImage.visibility = View.VISIBLE
+                    binding.nothingText.visibility = View.VISIBLE
+                } else {
+                    binding.nothingImage.visibility = View.GONE
+                    binding.nothingText.visibility = View.GONE
+                }
             }
+
         }
 
         // Scroll to top of geofication list if new item added or item changed
@@ -123,6 +138,7 @@ class MainFragment : Fragment() {
             }
         }
 
+        // Create notifications chanel
         createChannel(
             getString(R.string.on_time_notification_channel_id),
             getString(R.string.on_time_notification_channel_name)
@@ -155,7 +171,7 @@ class MainFragment : Fragment() {
                 val deletedGeofication = mainViewModel.geoficationList.value!!.find { geofication -> geoficationId == geofication.id }
                     ?: return
 
-                mainViewModel.swipeDeleteGeofication(deletedGeofication.id)
+                mainViewModel.swipeDeleteGeofication(deletedGeofication)
 
                 Snackbar.make(binding.notifList, getString(R.string.deleted), Snackbar.LENGTH_LONG)
                     .setAction(
@@ -215,7 +231,7 @@ class MainFragment : Fragment() {
 
                 // Calculate position of delete icon
                 val deleteIconTop = itemView.top + (itemHeight - iconInnerHeight) / 2
-                val deleteIconMargin = (itemHeight - iconInnerHeight) / 2
+                val deleteIconMargin = iconInnerHeight
                 val deleteIconLeft = itemView.right - deleteIconMargin - iconInnerWidth
                 val deleteIconRight = itemView.right - deleteIconMargin
                 val deleteIconBottom = deleteIconTop + iconInnerHeight
@@ -254,5 +270,24 @@ class MainFragment : Fragment() {
                 requireActivity().getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(notificationChannel)
         }
+    }
+
+    private fun showInfoDialog() {
+        MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog__Center)
+            .setTitle("Please pay attention")
+            .setMessage(getString(R.string.help_battery))
+            .setIcon(R.drawable.ic_help)
+            .setNegativeButton(getString(R.string.settings)) { dialog, _ ->
+                startActivity(Intent().apply {
+                    action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                    data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                })
+                dialog.cancel()
+            }
+            .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
+                dialog.cancel()
+            }
+            .show()
     }
 }

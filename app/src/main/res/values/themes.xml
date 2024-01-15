@@ -38,7 +38,12 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+    </style>
 
+    <style name="MaterialAlertDialog__Center" parent="@style/ThemeOverlay.Material3.MaterialAlertDialog.Centered">
+    </style>
 
+    <style name="ExpandedAppBar" parent="@style/TextAppearance.Material3.HeadlineLarge">
+        <item name="android:textSize">40sp</item>
     </style>
 </resources>

@@ -1,4 +1,4 @@
-package com.deniskishkovich.geofications
+package com.deniskishkovich.geofications.ui.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.deniskishkovich.geofications.data.Geofication
 import com.deniskishkovich.geofications.databinding.ListItemBinding
-import com.deniskishkovich.geofications.ui.main.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

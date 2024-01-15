@@ -408,7 +408,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.dialog_Title_background_location))
             .setMessage(getString(R.string.dialog_background_location_message))
-            .setIcon(android.R.drawable.ic_dialog_map)
+            .setIcon(R.drawable.ic_attention)
             .setNegativeButton(getString(R.string.dialog_button_skip)) { dialog, _ ->
                 dialog.cancel()
             }

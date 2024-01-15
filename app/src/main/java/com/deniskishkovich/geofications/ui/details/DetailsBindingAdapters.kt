@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.google.android.material.chip.Chip
 import java.text.DateFormat
-import java.util.Calendar
 
 @BindingAdapter("app:set_timestamp_text")
 fun setTimestamp(textView: TextView, editedTimeInMillis: Long?) {

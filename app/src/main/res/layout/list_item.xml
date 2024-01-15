@@ -13,7 +13,7 @@
 
         <variable
             name="clickListener"
-            type="com.deniskishkovich.geofications.GeoficationClickListener" />
+            type="com.deniskishkovich.geofications.ui.main.GeoficationClickListener" />
 
         <variable
             name="viewModel"

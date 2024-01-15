@@ -26,7 +26,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
 
-class GeoficationDetailsFragment() : Fragment() {
+class GeoficationDetailsFragment : Fragment() {
 
     private lateinit var geoficationDetailsViewModel: GeoficationDetailsViewModel
 
@@ -58,7 +58,7 @@ class GeoficationDetailsFragment() : Fragment() {
         val viewModelFactory =
             GeoficationDetailsViewModelFactory(dataSource, argGeoficationID, application)
         geoficationDetailsViewModel =
-            ViewModelProvider(this, viewModelFactory).get(GeoficationDetailsViewModel::class.java)
+            ViewModelProvider(this, viewModelFactory)[GeoficationDetailsViewModel::class.java]
 
         binding.viewModel = geoficationDetailsViewModel
         binding.lifecycleOwner = this
@@ -246,7 +246,7 @@ class GeoficationDetailsFragment() : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.dialog_title_get_notified))
             .setMessage(getString(R.string.dialog_message_notifications_permission))
-            .setIcon(android.R.drawable.ic_popup_reminder)
+            .setIcon(R.drawable.ic_attention)
             .setNegativeButton(getString(R.string.dialog_button_skip)) { dialog, _ ->
                 dialog.cancel()
             }

@@ -13,10 +13,4 @@ class MainActivity : AppCompatActivity() {
         // Lay out app behind the system bars (for App Bar styling)
         WindowCompat.setDecorFitsSystemWindows(window, false)
     }
-
-    /*TODO 1.request notification permission
-      TODO 2. check alarmManager if device restarts
-      TODO 3. adjust style material3
-      TODO 4. подсказка ничего не найдено, если в поиске не нашлось, снекбары для поиска
-    */
 }

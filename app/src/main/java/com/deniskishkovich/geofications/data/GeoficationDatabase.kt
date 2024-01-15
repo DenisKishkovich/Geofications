@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(entities = [Geofication::class], version = 1, exportSchema = false)
-abstract class GeoficationDatabase() : RoomDatabase() {
+abstract class GeoficationDatabase : RoomDatabase() {
     abstract val geoficationDAO: GeoficationDao
 
     /**
@@ -53,7 +53,7 @@ abstract class GeoficationDatabase() : RoomDatabase() {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         GeoficationDatabase::class.java,
-                        "geofications_databse"
+                        "geofications_database"
                     ).fallbackToDestructiveMigration().build()
                     // (Wipes and rebuilds instead of migrating if no Migration object.)
 

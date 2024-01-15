@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit
 
 class GeoficationDetailsViewModel(
     private val database: GeoficationDao,
-    var geoficationID: Long,
+    private var geoficationID: Long,
     private val app: Application
 ) : AndroidViewModel(app) {
 
@@ -494,6 +494,9 @@ class GeoficationDetailsViewModel(
         }
     }
 
+    /**
+     * Cancels location notification and geofence
+     */
     fun cancelLocationNotificationAndGeofence() {
         _isLocationNotificationOn.value = false
         _latLngWhereNotify.value = null
@@ -515,6 +518,9 @@ class GeoficationDetailsViewModel(
         }
     }
 
+    /**
+     * Updates location notification
+     */
     fun updateLocationNotification(latLng: LatLng, address: String) {
         _isLocationNotificationOn.value = true
         _latLngWhereNotify.value = latLng
@@ -529,12 +535,18 @@ class GeoficationDetailsViewModel(
         }
     }
 
+    /**
+     * Updates location notification in database
+     */
     private suspend fun updateLocationNotificationInDb(id: Long, latLng: LatLng?, address: String?, isSet: Boolean) {
         withContext(Dispatchers.IO) {
             database.updateLocationNotificationStatus(id, isSet, latLng?.latitude, latLng?.longitude, address)
         }
     }
 
+    /**
+     * Creates pending intend for geofencing
+     */
     private fun createPendingIntentForGeofence(): PendingIntent {
         notifyLocationIntent.apply {
             action = INTENT_ACTION_LOCATION
@@ -550,6 +562,9 @@ class GeoficationDetailsViewModel(
         )
     }
 
+    /**
+     * Creates geofence for geofication
+     */
     private fun createGeofence() {
         // Check permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

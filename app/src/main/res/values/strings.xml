@@ -40,4 +40,10 @@
     <string name="deleted">Deleted</string>
     <string name="undo">Undo</string>
     <string name="notif_chanel_description">On time and location reminders\' notifications</string>
+    <string name="ok">OK</string>
+    <string name="help_battery">For proper work of notifications, the application needs permission to run in the background and auto-launch.</string>
+    <string name="info">Info</string>
+    <string name="no_reminders_image_content_description">There are no reminders image</string>
+    <string name="no_reminders_text">No reminders here\nCreate one!</string>
+    <string name="all_reminders_title">All reminders</string>
 </resources>
