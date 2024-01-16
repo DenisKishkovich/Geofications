@@ -328,7 +328,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
                 return
             }
         } else {
-            if (foregroundLocationPermissionGranted) {
+            if (!foregroundLocationPermissionGranted) {
                 return
             }
         }
@@ -337,7 +337,6 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         if (mapsViewModel.selectedLocationLatLng.value == null) {
             return
         }
-
         sharedViewModel.updateLocationNotification(mapsViewModel.selectedLocationLatLng.value!!, mapsViewModel.selectedLocationAddressString.value ?: "")
     }
 
