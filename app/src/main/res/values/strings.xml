@@ -9,13 +9,12 @@
     <string name="delete">Delete</string>
     <string name="create_notification">Create notification</string>
     <string name="delete_all_completed_notifications">Delete completed</string>
-    <string name="notif_empty">Notification cannot be empty</string>
-
+    <string name="notif_empty">Reminder\'s title cannot be empty</string>
     <string name="on_time_notification_channel_id" translatable="false">on_time_channel</string>
     <string name="on_time_notification_channel_name">Reminders</string>
-    <string name="add_notification">Add notification</string>
-    <string name="edit_notification">Edit notification</string>
-    <string name="time_less_than_current">Reminder time is less than current time!</string>
+    <string name="create_reminder">Create reminder</string>
+    <string name="edit_reminder">Edit reminder</string>
+    <string name="time_less_than_current">The set time is less than the current time!</string>
     <string name="dialog_save_button">Save</string>
     <string name="dialog_cancel_button">Cancel</string>
     <string name="dialog_select_time_button">Select Time</string>
@@ -28,12 +27,12 @@
     <string name="bottom_dialog_option_time">Set a reminder by time</string>
     <string name="bottom_dialog_option_location">Set a reminder by location</string>
     <string name="title_select_location">Select a location</string>
-    <string name="dialog_Title_background_location">Missing \"All time\" location permission</string>
+    <string name="dialog_title_background_location">Missing \"All time\" location permission</string>
     <string name="dialog_background_location_message">To set reminders by location, the application needs permission for \"All the time\" location access. Pleas set this permission in settings.</string>
     <string name="dialog_button_open_setings">Open settings</string>
-    <string name="snackbar_location_permission">You need to grant location permissions to set the reminder</string>
+    <string name="snackbar_location_permission">Please, grant location permissions</string>
     <string name="settings">Settings</string>
-    <string name="internrt_access_problem">Problem with internet access</string>
+    <string name="internet_access_problem">Problem with internet access</string>
     <string name="hint_city_and_address">City and address</string>
     <string name="select_location_prompt">Please select a location</string>
     <string name="failed_to_set_a_reminder_for_location">Failed to set a reminder for location</string>

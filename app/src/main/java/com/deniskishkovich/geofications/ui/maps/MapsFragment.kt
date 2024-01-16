@@ -406,7 +406,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
      */
     private fun showRequestBackgroundPermissionDialog() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.dialog_Title_background_location))
+            .setTitle(getString(R.string.dialog_title_background_location))
             .setMessage(getString(R.string.dialog_background_location_message))
             .setIcon(R.drawable.ic_attention)
             .setNegativeButton(getString(R.string.dialog_button_skip)) { dialog, _ ->
@@ -426,7 +426,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
     private fun makeSnackbarForPermissions() {
         view?.let {
             Snackbar.make(it,
-                getString(R.string.snackbar_location_permission), Snackbar.LENGTH_SHORT)
+                getString(R.string.snackbar_location_permission), Snackbar.LENGTH_LONG)
                 .setAction(getString(R.string.settings)) {
                     startActivity(Intent().apply {
                         action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS

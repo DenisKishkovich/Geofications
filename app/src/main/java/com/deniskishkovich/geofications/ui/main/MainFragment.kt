@@ -45,10 +45,10 @@ class MainFragment : Fragment() {
 
         // Set animations
         exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ true).apply {
-            duration = 750
+            duration = 850
         }
         reenterTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ false).apply {
-            duration = 750
+            duration = 850
         }
     }
 
@@ -126,7 +126,7 @@ class MainFragment : Fragment() {
         mainViewModel.navigateToGeoficationDetails.observe(viewLifecycleOwner) {
             it?.let {
                 val argAppBarTitle =
-                    if (it == -1L) getString(R.string.add_notification) else getString(R.string.edit_notification)
+                    if (it == -1L) getString(R.string.create_reminder) else getString(R.string.edit_reminder)
 
                 this.findNavController().navigate(
                     MainFragmentDirections.actionMainFragmentToGeoficationDetailsFragment(

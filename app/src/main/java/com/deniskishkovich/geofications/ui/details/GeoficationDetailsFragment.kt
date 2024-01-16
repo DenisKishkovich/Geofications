@@ -135,10 +135,10 @@ class GeoficationDetailsFragment : Fragment() {
 
         // Set animations
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ true).apply {
-            duration = 750
+            duration = 850
         }
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, /* forward= */ false).apply {
-            duration = 750
+            duration = 850
         }
 
         exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, /* forward= */ true).apply {

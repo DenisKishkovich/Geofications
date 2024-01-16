@@ -16,7 +16,7 @@ fun NotificationManager.sendNotification(notificationId: Long = 0L, messageTitle
 
     val INTENT_ACTION_COMPLETED = "com.deniskishkovich.action.completed"
 
-    val appbarTitleArg = applicationContext.getString(R.string.edit_notification)
+    val appbarTitleArg = applicationContext.getString(R.string.edit_reminder)
 
     val argsBundle = Bundle()
     argsBundle.putLong("geoficationID", notificationId)
