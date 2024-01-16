@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.AlarmManagerCompat
@@ -632,13 +631,6 @@ class GeoficationDetailsViewModel(
     }
 
     private fun removeGeofence() {
-        geofencingClient.removeGeofences(createPendingIntentForGeofence()).run {
-            addOnSuccessListener {
-                Log.i("GeoficationDetailsViewModel", "Geofence is removed")
-            }
-            addOnFailureListener {
-                Log.e("GeoficationDetailsViewModel", "Failed to remove the geofence")
-            }
-        }
+        geofencingClient.removeGeofences(createPendingIntentForGeofence())
     }
 }
