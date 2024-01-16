@@ -157,7 +157,7 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
         map = googleMap
 
         // Set padding for google map's default buttons
-        map.setPadding(0, 300, 0, 0)
+        map.setPadding(0, 300, 0, 150)
 
         // Prompt the user for permission.
         getLocationPermission()
