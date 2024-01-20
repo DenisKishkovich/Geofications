@@ -7,3 +7,10 @@
 Гео-напомианния - это отличный помощник для тех, кто хочет быть продуктивным и не пропускать ничего важного в своей жизни!
 
 [Скачать apk](https://github.com/DenisKishkovich/Geofications/blob/master/app/release/Geofications.apk)
+
+## Лицензия
+### Исходный код распостраняется под лицензией GPL v3
+> Copyright (C) 2023-2024 Denis Kishkovich
+>
+> This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License.
+
