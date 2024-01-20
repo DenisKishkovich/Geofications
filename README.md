@@ -6,7 +6,7 @@
 рядом с булочной, или чтобы позвонить другу, когда наступит определенное время.  
 Гео-напомианния - это отличный помощник для тех, кто хочет быть продуктивным и не пропускать ничего важного в своей жизни!
 
-[Скачать apk](https://github.com/DenisKishkovich/Geofications/blob/master/app/release/Geofications.apk)
+[Скачать apk](https://github.com/DenisKishkovich/Geofications/raw/master/app/release/Geofications.apk)
 
 ## Лицензия
 ### Исходный код распостраняется под лицензией GPL v3
