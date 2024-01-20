@@ -6,7 +6,7 @@ and also customize them at your discretion. For example, you can set a reminder 
 or to call a friend when at certain time.  
 Geofications is a great assistant for those who want to be productive and not miss anything important in their lives!
 
-[Download apk](https://github.com/DenisKishkovich/Geofications/blob/master/app/release/Geofications.apk)
+[Download apk](https://github.com/DenisKishkovich/Geofications/raw/master/app/release/Geofications.apk)
 
 ## LICENSE
 ### The source code is distributed under the GPL v3 license
