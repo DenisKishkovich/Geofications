@@ -26,6 +26,14 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            debuggable = false
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            debuggable = true
+            signingConfig signingConfigs.debug
+            applicationIdSuffix '.debug'
         }
     }
     compileOptions {
@@ -38,6 +46,7 @@ android {
     buildFeatures {
         dataBinding true
         viewBinding true
+        buildConfig true
     }
 }
 

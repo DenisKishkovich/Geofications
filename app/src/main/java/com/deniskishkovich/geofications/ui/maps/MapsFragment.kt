@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -244,8 +243,8 @@ class MapsFragment : DialogFragment(), OnMapReadyCallback {
                     )
                 }
             }
-        } catch (e: SecurityException) {
-            Log.e("Exception: %s", e.message, e)
+        } catch (_: SecurityException) {
+
         }
     }
 
